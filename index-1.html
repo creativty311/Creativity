@@ -4,9 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Professional Installation Management System</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <style>
 * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -29,30 +33,35 @@ textarea { resize: vertical; height: 80px; }
 .save-btn { width: 100%; background: #2a5298; color: white; font-size: 18px; border: none; border-radius: 10px; padding: 12px; margin-top: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
 .save-btn:hover { background: #1e3c72; }
 
-/* Admin Logs (Visible only to Admin) */
+/* 🔒 تم ضبط الحاوية لتكون مخفية تلقائياً (display: none) */
 .logs-container { display: none; max-width: 1000px; margin: 20px auto; background: white; color: #333; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); text-align: left; }
 .logs-container h2 { color: #1e3c72; margin-bottom: 15px; font-size: 22px; display: flex; align-items: center; gap: 10px; }
 .table-wrapper { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
 th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
 th { background-color: #f4f6f9; color: #1e3c72; font-weight: bold; }
-.ticket-code { background: #e2e8f0; padding: 3px 8px; border-radius: 5px; font-family: monospace; font-weight: bold; color: #0f172a; }
-.home-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 8px 16px; border-radius: 8px; cursor: pointer; float: left; transition: 0.3s; text-decoration: none; font-size: 14px; }
+.badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; color: white; }
+.badge-new { background-color: #2a5298; }
+.badge-cancel { background-color: #ff4d4d; }
+.delete-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+.delete-btn:hover { background: #cc3333; }
+.home-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block; margin-bottom: 20px; transition: 0.3s; }
 .home-btn:hover { background: white; color: #1e3c72; }
 </style>
 </head>
-<body>
 
-<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a><br><br>
+<body>
+<br>
+<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to Main Home</a>
 
 <h1><i class="fa-solid fa-screwdriver-wrench"></i> Installation Request System</h1>
 
 <div class="btn-container">
     <button class="main-btn btn-new" onclick="openForm('new')">
-        <i class="fa-solid fa-plus"></i> New Installation Request
+        <i class="fa-solid fa-plus"></i> New Request
     </button>
     <button class="main-btn btn-cancel" onclick="openForm('cancel')">
-        <i class="fa-solid fa-trash-can"></i> Cancel Request by Code
+        <i class="fa-solid fa-trash-can"></i> Cancel Old Request
     </button>
 </div>
 
@@ -67,33 +76,48 @@ th { background-color: #f4f6f9; color: #1e3c72; font-weight: bold; }
     </div>
 </div>
 
-<div class="logs-container" id="adminLogSection">
-    <h2><i class="fa-solid fa-folder-open"></i> Live Active Installations (Admin Core View)</h2>
+<div class="logs-container" id="adminSection">
+    <h2><i class="fa-solid fa-folder-open"></i> Submitted Live Database Logs (Global Web System)</h2>
     <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
-                    <th>Request Code</th>
-                    <th>Device Type</th>
+                    <th>Type</th>
+                    <th>Identifier / Device</th>
                     <th>Customer Name</th>
-                    <th>Phone</th>
+                    <th>Phone / Contact</th>
                     <th>Location</th>
-                    <th>Setup Notes</th>
-                    <th>Actions</th> <!-- عمود الحذف الجديد -->
+                    <th>Details / Reasons</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="logsTableBody"></tbody>
         </table>
     </div>
 </div>
+
 <script>
+const firebaseConfig = {
+    apiKey: "AIzaSyBV93xGbKln5RcaPP9VOTlmh5auKD04Zms",
+    authDomain: "creatitity-d09f7.firebaseapp.com",
+    databaseURL: "https://creatitity-d09f7-default-rtdb.firebaseio.com",
+    projectId: "creatitity-d09f7",
+    storageBucket: "creatitity-d09f7.appspot.com",
+    messagingSenderId: "591631410491",
+    appId: "1:591631410491:web:ff000c0a8d2f030f57031e"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
 let currentType = 'new';
 
+// فحص الصلاحية عند فتح الصفحة فوراً
 document.addEventListener("DOMContentLoaded", () => {
-    // التحقق من هوية المسؤول لتشغيل اللوحة الخاصة بك
-    if(sessionStorage.getItem("isAdmin") === "true") {
-        document.getElementById("adminLogSection").style.display = "block";
-        displayRequests();
+    const isAdmin = sessionStorage.getItem("isAdmin");
+    if (isAdmin === "true") {
+        document.getElementById("adminSection").style.display = "block"; // إظهار الحاوية للمسؤول
+        listenToLiveRequests(); // تشغيل ربط البيانات الحية
     }
 });
 
@@ -107,8 +131,8 @@ function openForm(type){
     modal.style.display = "block";
     
     if(type === 'new') {
-        title.innerHTML = `<i class="fa-solid fa-plus-circle"></i> New Installation`;
-        submitBtn.innerHTML = `Submit Ticket`;
+        title.innerHTML = `<i class="fa-solid fa-plus-circle"></i> New Installation Request`;
+        submitBtn.innerHTML = `Submit Installation`;
         submitBtn.style.background = "#2a5298";
         
         dynamicFields.innerHTML = `
@@ -126,19 +150,25 @@ function openForm(type){
             <input type="text" id="field_phone" placeholder="Enter phone number" required>
             <label><i class="fa-solid fa-location-dot"></i> Location</label>
             <input type="text" id="field_location" placeholder="Enter installation location" required>
-            <label><i class="fa-solid fa-comment-dots"></i> Requirements / Notes</label>
+            <label><i class="fa-solid fa-comment-dots"></i> Setup Requirements / Notes</label>
             <textarea id="field_details" placeholder="Enter any specific requirements..." required></textarea>
         `;
     } else {
-        title.innerHTML = `<i class="fa-solid fa-ban"></i> Cancel Ticket`;
+        title.innerHTML = `<i class="fa-solid fa-ban"></i> Cancel Request`;
         submitBtn.innerHTML = `Confirm Cancellation`;
         submitBtn.style.background = "#ff4d4d";
         
         dynamicFields.innerHTML = `
-            <label><i class="fa-solid fa-hashtag"></i> Enter Ticket Code</label>
-            <input type="text" id="cancel_code" placeholder="e.g. INS-4820" required>
-            <label><i class="fa-solid fa-user"></i> Customer Name (Verification)</label>
-            <input type="text" id="cancel_name" placeholder="Enter full name registered" required>
+            <label><i class="fa-solid fa-hashtag"></i> Ticket Code ID to Cancel</label>
+            <input type="text" id="field_device" placeholder="Enter Ticket Code (e.g. INS-4820)" required>
+            <label><i class="fa-solid fa-user"></i> Registered Customer Name</label>
+            <input type="text" id="field_name" placeholder="Enter name to confirm identity" required>
+            <label><i class="fa-solid fa-phone"></i> Contact Phone</label>
+            <input type="text" id="field_phone" placeholder="Enter contact phone number" required>
+            <label><i class="fa-solid fa-location-dot"></i> Assigned Location</label>
+            <input type="text" id="field_location" placeholder="Confirm original location" required>
+            <label><i class="fa-solid fa-triangle-exclamation"></i> Reason for Cancellation</label>
+            <textarea id="field_details" placeholder="Please let us know why you want to cancel..." required></textarea>
         `;
     }
 }
@@ -155,120 +185,88 @@ window.onclick = function(event){
 
 function handleSubmit(event) {
     event.preventDefault(); 
-    let existingRequests = JSON.parse(localStorage.getItem("installRequests")) || [];
+    const ticketId = "INS-" + Math.floor(1000 + Math.random() * 9000);
 
-    if(currentType === 'new') {
-        const generatedCode = "INS-" + Math.floor(1000 + Math.random() * 9000);
-        const newRequest = {
-            id: generatedCode,
-            device: document.getElementById("field_device").value,
-            name: document.getElementById("field_name").value,
-            phone: document.getElementById("field_phone").value,
-            location: document.getElementById("field_location").value,
-            details: document.getElementById("field_details").value
-        };
+    const requestData = {
+        dbId: ticketId,
+        type: currentType,
+        device: document.getElementById("field_device").value,
+        name: document.getElementById("field_name").value,
+        phone: document.getElementById("field_phone").value,
+        location: document.getElementById("field_location").value,
+        details: document.getElementById("field_details").value
+    };
 
-        existingRequests.push(newRequest);
-        localStorage.setItem("installRequests", JSON.stringify(existingRequests));
-        
+    database.ref('installations/' + ticketId).set(requestData)
+    .then(() => {
         closeForm(); 
-        if(sessionStorage.getItem("isAdmin") === "true") displayRequests();
-
-        Swal.fire({
-            title: 'Created Successfully!',
-            html: `Your individual Ticket ID is: <b style="color:#2a5298; font-size:22px;">${generatedCode}</b>.<br>Provide this code to modify or cancel your operation.`,
-            icon: 'success',
-            confirmButtonText: 'Got It',
-            confirmButtonColor: '#2a5298'
-        });
-    } else {
-        const codeInput = document.getElementById("cancel_code").value.trim().toUpperCase();
-        const nameInput = document.getElementById("cancel_name").value.trim().toLowerCase();
-        const recordIndex = existingRequests.findIndex(req => req.id === codeInput && req.name.trim().toLowerCase() === nameInput);
-
-        if (recordIndex !== -1) {
-            existingRequests.splice(recordIndex, 1);
-            localStorage.setItem("installRequests", JSON.stringify(existingRequests));
-            closeForm();
-            if(sessionStorage.getItem("isAdmin") === "true") displayRequests();
-
+        if(currentType === 'new') {
             Swal.fire({
-                title: 'Terminated',
-                text: `Ticket ${codeInput} has been successfully canceled.`,
+                title: 'Global Success!',
+                text: `Your request has been published worldwide. Code: ${ticketId}`,
                 icon: 'success',
-                confirmButtonColor: '#ff4d4d'
+                confirmButtonColor: '#2a5298'
             });
         } else {
-            Swal.fire('Error', 'No matching credentials found.', 'error');
+            Swal.fire({
+                title: 'Cancellation Logged',
+                text: 'Cancellation broadcasted to cloud database.',
+                icon: 'warning',
+                confirmButtonColor: '#ff4d4d'
+            });
         }
-    }
-}
-
-function displayRequests() {
-    const tableBody = document.getElementById("logsTableBody");
-    let existingRequests = JSON.parse(localStorage.getItem("installRequests")) || [];
-    tableBody.innerHTML = "";
-    if (existingRequests.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#999;">No active installation tickets.</td></tr>`;
-        return;
-    }
-    existingRequests.forEach(req => {
-        tableBody.innerHTML += `
-            <tr>
-                <td><span class="ticket-code">${req.id}</span></td>
-                <td><strong>${req.device}</strong></td>
-                <td>${req.name}</td>
-                <td>${req.phone}</td>
-                <td>${req.location}</td>
-                <td>${req.details}</td>
-            </tr>`;
-    });
-}
-function displayRequests() {
-    const tableBody = document.getElementById("logsTableBody");
-    let existingRequests = JSON.parse(localStorage.getItem("installRequests")) || [];
-    tableBody.innerHTML = "";
-    
-    if (existingRequests.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#999;">No active installation tickets.</td></tr>`;
-        return;
-    }
-    
-    existingRequests.forEach((req, index) => {
-        tableBody.innerHTML += `
-            <tr>
-                <td><span class="ticket-code">${req.id}</span></td>
-                <td><strong>${req.device}</strong></td>
-                <td>${req.name}</td>
-                <td>${req.phone}</td>
-                <td>${req.location}</td>
-                <td>${req.details}</td>
-                <td>
-                    <button onclick="deleteRequest(${index}, 'install')" style="background:#ff4d4d; color:white; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; width:auto; height:auto; font-size:12px; margin:0;">
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                </td>
-            </tr>`;
     });
 }
 
-function deleteRequest(index, type) {
+function listenToLiveRequests() {
+    database.ref('installations').on('value', (snapshot) => {
+        const tableBody = document.getElementById("logsTableBody");
+        tableBody.innerHTML = ""; 
+        const data = snapshot.val();
+        
+        if (!data) {
+            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#999;">No requests registered in the cloud database.</td></tr>`;
+            return;
+        }
+
+        Object.keys(data).forEach(key => {
+            const req = data[key];
+            const typeBadge = req.type === 'new' ? '<span class="badge badge-new">NEW</span>' : '<span class="badge badge-cancel">CANCEL</span>';
+            const row = `
+                <tr>
+                    <td>${typeBadge} <br><small style="color:#777; font-weight:bold;">${req.dbId || ''}</small></td>
+                    <td><strong>${req.device}</strong></td>
+                    <td>${req.name}</td>
+                    <td>${req.phone}</td>
+                    <td>${req.location}</td>
+                    <td>${req.details}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteLiveTicket('${req.dbId}')">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    });
+}
+
+function deleteLiveTicket(id) {
     Swal.fire({
-        title: 'Are you sure?',
-        text: "This ticket will be permanently removed from the system!",
+        title: 'Delete from cloud?',
+        text: "This will wipe the data from all administrator viewpoints globally!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ff4d4d',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
+        cancelButtonColor: '#777',
+        confirmButtonText: 'Yes, Delete Completely!'
     }).then((result) => {
         if (result.isConfirmed) {
-            let key = type === 'install' ? "installRequests" : "";
-            let requests = JSON.parse(localStorage.getItem(key)) || [];
-            requests.splice(index, 1);
-            localStorage.setItem(key, JSON.stringify(requests));
-            displayRequests(); // إعادة تحديث الجدول فوراً
-            Swal.fire('Deleted!', 'The task has been removed.', 'success');
+            database.ref('installations/' + id).remove()
+            .then(() => {
+                Swal.fire('Deleted!', 'Ticket removed from system servers.', 'success');
+            });
         }
     });
 }
