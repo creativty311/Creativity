@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Creativity </title>
+    <meta name="description"  content="my page for Networking ">
+    <meta name="keywords" content="network"/>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3598/3598209.png">
+     <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <button type="button" class="admin-login-btn" onclick="loginAsAdmin()">
+        <i class="fa-solid fa-lock"></i> Login as Admin
+    </button>
+
+    <h1 class="welcome">Welcome  </h1>
+             <h1 class="site-title">Creativity Center</h1>
+             <h1 class="defintion" >This website for networking </h1>
+
+    <div>
+        <form action="">
+            <button type="button" class="install"
+                onclick="window.location.href='index-1.html'">
+                Installation
+            </button>   
+
+            <button   type="button" class="maintenance"
+            onclick="window.location.href='index-2.html'">Maintenance</button><br>
+
+            <button type="button" class="admin" 
+            onclick="window.location.href='index-3.html'">Administration</button>
+             <button type="button" class="about" 
+             onclick="window.location.href='index-4.html'">About Us</button>
+           
+        </form>
+    </div>
+
+    <div class="social-links">
+        <a href="https://www.facebook.com/share/1DEsTXfEzs/" target="_blank">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
+
+         <a href="https://wa.me/201552250338" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+    </div>
+
+    <script>
+    function loginAsAdmin() {
+        Swal.fire({
+            title: 'Admin Authorization',
+            input: 'password',
+            inputPlaceholder: 'Enter Admin Secret Key',
+            inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
+            showCancelButton: true,
+            confirmButtonText: 'Access Terminal',
+            confirmButtonColor: '#0072ff'
+        }).then((result) => {
+            if (result.value === '2532006') { 
+                sessionStorage.setItem("isAdmin", "true");
+                Swal.fire({
+                    title: 'Access Granted!',
+                    text: 'You are now logged in as System Administrator.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else if (result.value) {
+                Swal.fire('Access Denied', 'Incorrect password key!', 'error');
+            }
+        });
+    }
+    </script>
+</body>
+</html>

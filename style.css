@@ -1,0 +1,198 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    background-image: url(yy.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh; 
+    
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    padding: 20px; 
+    box-sizing: border-box;
+}
+
+.site-title {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+
+.welcome {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 30px; 
+    color: white;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+
+.defintion {
+    position: absolute;
+    top: 65px; 
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px; 
+    font-weight: bold;
+    color: white;
+    letter-spacing: 1px;
+    text-align: center;
+    width: 90%; 
+}
+
+.social-links {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+}
+
+.social-links a {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    transition: 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.social-links a:first-child { background: #1877f2; }
+.social-links a:last-child { background: #25d366; }
+.social-links a:hover { transform: scale(1.1); }
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 120px; 
+}
+
+
+button {
+    width: 280px;
+    height: 55px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    margin: 10px;
+    transition: 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.install { background: #2ecc71; }
+.maintenance { background: #f39c12; color: #000; }
+.admin { background: #3498db; }
+.about { background: #1abc9c; }
+.admin-login-btn{
+ background: #3498db;}
+
+button:hover {
+    transform: translateY(-3px);
+    opacity: 0.9;
+}
+
+/* تنسيق زر دخول المسؤول الجديد - أسفل اليمين وحجم أصغر */
+.admin-login-btn {
+    position: fixed; /* تم تغييره إلى fixed ليظل ثابتًا أسفل الشاشة */
+    bottom: 20px;
+    right: 20px;
+    width: auto !important; /* إلغاء العرض الكبير الافتراضي للأزرار */
+    height: auto !important; /* إلغاء الارتفاع الافتراضي */
+    padding: 8px 15px; /* تصغير المساحة الداخلية لتقليل الحجم */
+    font-size: 13px; /* تصغير حجم الخط */
+    font-weight: 600;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 20px; /* حواف دائرية ناعمة تناسب الحجم الصغير */
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 9999; /* لضمان ظهوره فوق أي عنصر آخر */
+    transition: 0.3s ease;
+    margin: 0; /* إلغاء الهوامش الافتراضية للأزرار الأخرى */
+}
+
+/* تأثير التمرير (Hover) الخاص به */
+.admin-login-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+@media (max-width: 768px) {
+    body {
+        justify-content: flex-start; 
+        padding-top: 180px; 
+    }
+
+    
+    .welcome {
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 18px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .site-title {
+        top: 45px;
+        font-size: 26px;
+        width: 100%;
+    }
+
+    .defintion {
+        top: 85px;
+        font-size: 20px;
+    }
+
+    .social-links {
+        top: 135px; 
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+    }
+
+    .container {
+        margin-top: 20px; 
+        width: 100%;
+    }
+
+    button {
+        width: 90%; 
+        max-width: 280px; 
+    }
+}
+
+/* تعديل التوافق مع الهواتف والشاشات الصغيرة */
+@media (max-width: 768px) {
+    .admin-login-btn {
+        bottom: 15px;
+        right: 15px;
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
