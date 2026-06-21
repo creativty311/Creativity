@@ -3,96 +3,230 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network Administrator</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>Network Administrator Terminal</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <style>
-body { text-align:center; background:linear-gradient(135deg, #6a11cb, #2575fc); font-family:Arial, sans-serif; color:white; padding: 20px; }
-button.trigger-btn { width:220px; height:50px; font-size:18px; border:none; border-radius:12px; cursor:pointer; margin-top:30px; background:white; color:#333; font-weight:bold; transition:0.3s; }
-button.trigger-btn:hover { transform:scale(1.05); }
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; }
-.modal-content { background:white; width:420px; padding:25px; border-radius:15px; margin:80px auto; text-align:left; color:black; animation:pop 0.3s ease-in-out; position: relative; }
-@keyframes pop { from{transform:scale(0.7); opacity:0;} to{transform:scale(1); opacity:1;} }
-.close { float:right; font-size:28px; cursor:pointer; font-weight:bold; color: #aaa; }
+body {
+    text-align: center;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    font-family: Arial, sans-serif;
+    color: white;
+    padding: 50px 20px;
+    margin: 0;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* الأزرار */
+button.action-btn {
+    width: 240px;
+    height: 50px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 20px;
+    background: white;
+    color: #333;
+    font-weight: bold;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+button.action-btn:hover {
+    transform: scale(1.05);
+}
+
+/* النافذة المنبثقة Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+}
+
+/* بطاقة النموذج */
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 440px;
+    padding: 30px;
+    border-radius: 20px;
+    margin: 40px auto;
+    text-align: left;
+    color: #333;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #aaa;
+    transition: 0.2s;
+}
+
 .close:hover { color: #000; }
-input, select { width:100%; padding:10px; margin-top:6px; margin-bottom:15px; border:1px solid #ccc; border-radius:8px; outline:none; }
-input:focus, select:focus { border-color:#2575fc; }
-label { font-weight:bold; }
-.save-btn { width:100%; background:#2575fc; color:white; font-size:18px; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.save-btn:hover { background:#1a5fd4; }
-.logs-container { max-width: 1000px; margin: 40px auto; background: white; color: #333; padding: 25px; border-radius: 15px; text-align: left; }
-.logs-container h2 { color: #6a11cb; margin-bottom: 15px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
-th { background: #f4f6f9; color: #6a11cb; }
-.ticket-code { background: #eee; padding: 3px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; }
-.delete-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-.home-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block;  }
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+    color: #444;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.save-btn {
+    width: 100%;
+    background: #2575fc;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.save-btn:hover {
+    background: #1a5fd4;
+}
+
+/* 🔒 حاوية جدول المسؤول (مخفية تلقائياً) */
+.logs-container {
+    display: none;
+    max-width: 1000px;
+    margin: 40px auto;
+    background: white;
+    color: #333;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    text-align: left;
+}
+
+.logs-container h2 {
+    color: #6a11cb;
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
+th { background-color: #f4f6f9; color: #6a11cb; font-weight: bold; }
+.delete-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+.delete-btn:hover { background: #cc3333; }
+.home-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block; margin-bottom: 20px; transition: 0.3s; }
+.home-btn:hover { background: white; color: #6a11cb; }
 </style>
 </head>
 
 <body>
-<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a><br><br>
+
+<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to  Home</a>
 
 <h1>Submit a request to the network administrator</h1>
 
-<button class="trigger-btn" onclick="openForm()">New Submit</button>
+<button class="action-btn" onclick="openForm()">New Submit</button>
 
 <div id="myForm" class="modal">
     <div class="modal-content">
+
         <span class="close" onclick="closeForm()">&times;</span>
-        <h2>Submit Administrative Request</h2>
-        <form id="adminForm" onsubmit="handleAdminSubmit(event)">
+
+        <h2>Submit Ticket</h2>
+
+        <form id="adminForm" onsubmit="handleSubmit(event)">
             <label>Device Type</label>
-            <select id="adm_device" required>
-                <option value="">-- Select Device --</option>
-                <option>Router</option>
-                <option>Switch</option>
-                <option>Access Point</option>
-                <option>Server</option>
+            <select id="field_device" required>
+                <option value="">-- Select system --</option>
+                <option>Security Cameras</option>
+                <option> LAN/WAN Networks </option>
+                <option>Setting Up VLANs </option>
+                <option>Windows Server</option>
+                <option>Firewall and Security</option>
+                <option> Other </option>
             </select>
+             
+
 
             <label>Customer Name</label>
-            <input type="text" id="adm_name" placeholder="Enter customer full name" required>
+            <input type="text" id="field_name" placeholder="Enter customer full name" required>
 
             <label>Phone Number</label>
-            <input type="text" id="adm_phone" placeholder="Enter phone number" required>
+            <input type="number" id="field_phone" placeholder="Enter phone number" required>
 
             <label>Location</label>
-            <input type="text" id="adm_location" placeholder="Enter location" required>
+            <input type="text" id="field_location" placeholder="Enter location" required>
 
-            <label>Problem Description</label>
-            <input type="text" id="adm_details" placeholder="Describe the issue" required>
+            <label>System Details</label>
+            <input type="text" id="field_details" placeholder="Describe the issue" required>
 
             <button type="submit" class="save-btn">Send Request</button>
         </form>
+
     </div>
 </div>
 
-<div class="logs-container">
-    <h2><i class="fa-solid fa-shield-halved"></i> Global Administrator Requests Queue (Live Cloud)</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Ticket ID</th>
-                <th>Device</th>
-                <th>Customer Name</th>
-                <th>Phone</th>
-                <th>Location</th>
-                <th>Problem Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="logsTableBody"></tbody>
-    </table>
+<div class="logs-container" id="adminSection">
+    <h2><i class="fa-solid fa-user-gear"></i> Administration Tasks Terminal (Global Web System)</h2>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticket Code</th>
+                    <th>Device</th>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Problem Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="logsTableBody"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-// كود الإعدادات الخاص بقاعدة بياناتك مأخوذ من ddddd.png
+// إعدادات الـ Firebase الخاصة بسيستمك المشترك
 const firebaseConfig = {
     apiKey: "AIzaSyBV93xGbKln5RcaPP9VOTlmh5auKD04Zms",
     authDomain: "creatitity-d09f7.firebaseapp.com",
@@ -103,47 +237,68 @@ const firebaseConfig = {
     appId: "1:591631410491:web:ff000c0a8d2f030f57031e"
 };
 
+// تشغيل فايربيز
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-document.addEventListener("DOMContentLoaded", listenToLiveRequests);
+// فحص صلاحية المسؤول فور تحميل الصفحة
+document.addEventListener("DOMContentLoaded", () => {
+    const isAdmin = sessionStorage.getItem("isAdmin");
+    if (isAdmin === "true") {
+        document.getElementById("adminSection").style.display = "block"; // إظهار الجدول للمسؤول فقط
+        listenToLiveRequests(); // البدء في قراءة البيانات الحية من السيرفر
+    }
+});
 
-function openForm(){ document.getElementById("myForm").style.display="block"; }
-function closeForm(){ document.getElementById("myForm").style.display="none"; document.getElementById("adminForm").reset(); }
+function openForm(){
+    document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm(){
+    document.getElementById("myForm").style.display = "none";
+    document.getElementById("adminForm").reset();
+}
 
 window.onclick = function(event){
     let modal = document.getElementById("myForm");
     if(event.target == modal){ closeForm(); }
 }
 
-function handleAdminSubmit(event) {
+// دالة إرسال الطلب وحفظه بالـ Firebase
+function handleSubmit(event) {
     event.preventDefault();
     const ticketId = "ADM-" + Math.floor(1000 + Math.random() * 9000);
 
     const requestData = {
-        id: ticketId,
-        device: document.getElementById("adm_device").value,
-        name: document.getElementById("adm_name").value,
-        phone: document.getElementById("adm_phone").value,
-        location: document.getElementById("adm_location").value,
-        details: document.getElementById("adm_details").value
+        dbId: ticketId,
+        device: document.getElementById("field_device").value,
+        name: document.getElementById("field_name").value,
+        phone: document.getElementById("field_phone").value,
+        location: document.getElementById("field_location").value,
+        details: document.getElementById("field_details").value
     };
 
-    database.ref('adminRequests/' + ticketId).set(requestData)
+    database.ref('administration/' + ticketId).set(requestData)
     .then(() => {
         closeForm();
-        Swal.fire('Dispatched Securely', `Admin Task ${ticketId} is now live!`, 'success');
+        Swal.fire({
+            title: 'Request Sent Successfully!',
+            text: `Admin Ticket created with Code: ${ticketId}`,
+            icon: 'success',
+            confirmButtonColor: '#2575fc'
+        });
     });
 }
 
+// دالة جلب البيانات وعرضها في الجدول للمسؤول بشكل حي
 function listenToLiveRequests() {
-    database.ref('adminRequests').on('value', (snapshot) => {
+    database.ref('administration').on('value', (snapshot) => {
         const tableBody = document.getElementById("logsTableBody");
         tableBody.innerHTML = "";
         const data = snapshot.val();
         
-        if(!data) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#aa;p">No core admin records pending.</td></tr>`;
+        if (!data) {
+            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#999;">No admin tasks registered in the cloud database.</td></tr>`;
             return;
         }
 
@@ -151,14 +306,16 @@ function listenToLiveRequests() {
             const req = data[key];
             tableBody.innerHTML += `
                 <tr>
-                    <td><span class="ticket-code">${req.id}</span></td>
+                    <td><strong style="color:#6a11cb;">${req.dbId || ''}</strong></td>
                     <td><strong>${req.device}</strong></td>
                     <td>${req.name}</td>
                     <td>${req.phone}</td>
                     <td>${req.location}</td>
                     <td>${req.details}</td>
                     <td>
-                        <button class="delete-btn" onclick="deleteAdminTicket('${req.id}')">Wipe</button>
+                        <button class="delete-btn" onclick="deleteLiveTicket('${req.dbId}')">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
                     </td>
                 </tr>
             `;
@@ -166,17 +323,21 @@ function listenToLiveRequests() {
     });
 }
 
-function deleteAdminTicket(id) {
+// دالة الحذف من السيرفر السحابي للمسؤول
+function deleteLiveTicket(id) {
     Swal.fire({
-        title: 'Wipe from Server?',
-        text: "Permanent data destruction!",
+        title: 'Delete admin log?',
+        text: "This deletes the ticket from the global cloud servers completely!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ff4d4d',
-        confirmButtonText: 'Yes, Wipe'
+        confirmButtonText: 'Yes, Delete Ticket'
     }).then((result) => {
-        if(result.isConfirmed) {
-            database.ref('adminRequests/' + id).remove();
+        if (result.isConfirmed) {
+            database.ref('administration/' + id).remove()
+            .then(() => {
+                Swal.fire('Deleted!', 'Admin task successfully cleared.', 'success');
+            });
         }
     });
 }

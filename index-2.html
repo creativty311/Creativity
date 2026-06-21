@@ -52,7 +52,7 @@ th { background-color: #f4f6f9; color: #1e3c72; font-weight: bold; }
 
 <body>
 <br>
-<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to Main Home</a>
+<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to  Home</a>
 
 <h1><i class="fa-solid fa-screwdriver-wrench"></i> Maintenance Request System</h1>
 
@@ -136,21 +136,26 @@ function openForm(type){
         submitBtn.style.background = "#2a5298";
         
         dynamicFields.innerHTML = `
-            <label><i class="fa-solid fa-microchip"></i> Device Type</label>
+            <label><i class="fa-solid fa-microchip"></i> Device /system   Type</label>
             <select id="field_device" required>
                 <option value="">-- Select Device --</option>
-                <option>Router</option>
-                <option>Switch</option>
-                <option>Access Point</option>
-                <option>Server</option>
+                <option>Security Cameras</option>
+                <option>LAN/WAN Networks</option>
+                <option> VLANs </option>
+                <option>Windows Server</option>
+                <option>Firewall and Security</option>
+                <option> Other </option>
+
             </select>
+
+    
             <label><i class="fa-solid fa-user"></i> Customer Name</label>
             <input type="text" id="field_name" placeholder="Enter customer full name" required>
             <label><i class="fa-solid fa-phone"></i> Phone Number</label>
             <input type="text" id="field_phone" placeholder="Enter phone number" required>
             <label><i class="fa-solid fa-location-dot"></i> Location</label>
             <input type="text" id="field_location" placeholder="Enter installation location" required>
-            <label><i class="fa-solid fa-comment-dots"></i> Setup Requirements / Notes</label>
+            <label><i class="fa-solid fa-comment-dots"></i> Problem Description / Notes</label>
             <textarea id="field_details" placeholder="Enter any specific requirements..." required></textarea>
         `;
     } else {
