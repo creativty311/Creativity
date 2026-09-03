@@ -20,7 +20,7 @@
 
         body {
             background: linear-gradient(to bottom, rgba(5, 20, 60, 0.35), rgba(5, 20, 60, 0.5)), 
-                        url('bg.png') no-repeat center center fixed;
+                        url('uuuu.jpg') no-repeat center center fixed;
             background-size: cover;
             height: 100vh;
             display: flex;
@@ -31,8 +31,6 @@
             text-align: center;
             position: relative;
             overflow: hidden;
-            /* رفع المحتوى الرئيسي للأعلى قليلاً */
-            padding-bottom: 60px;
         }
 
         /* عنوان Welcome في أعلى اليسار */
@@ -76,22 +74,22 @@
         .social-links a:nth-child(1) { background-color: #1877f2; }
         .social-links a:nth-child(2) { background-color: #25d366; }
 
-        /* العناوين الرئيسية في المنتصف */
+        /* الحاوية المخصصة للعنوان والوصف لرفعهما للأعلى */
+        .header-content {
+            margin-bottom: 45px;
+            transform: translateY(-20px); /* رفع العنوان والوصف فقط للأعلى */
+        }
+
         .site-title {
             font-size: 36px;
             font-weight: 800;
-            margin-bottom: 5px;
+            margin-bottom: 70px;
+            margin-top: 5px;
             text-shadow: 0 2px 8px rgba(0,0,0,0.7);
             letter-spacing: 0.5px;
         }
 
-        .defintion {
-            font-size: 18px;
-            font-weight: 400;
-            margin-bottom: 35px;
-            opacity: 0.9;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.7);
-        }
+        
 
         /* شبكة الأزرار الوسطى */
         .button-grid {
@@ -99,10 +97,11 @@
             grid-template-columns: 1fr 1fr;
             gap: 22px;
             width: 90%;
-            max-width: 580px;
+            max-width: 650px;
+            margin-bottom: 300px;
         }
 
-        /* الأزرار الرئيسية */
+        /* تصميم الأزرار الاحترافية */
         .btn {
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.25);
@@ -225,12 +224,16 @@
         </a>
     </div>
 
-    <div class="site-title">Creativity Center</div>
-    <div class="defintion">This website for networking</div>
+    <!-- العنوان والوصف فقط مرفوعين للأعلى -->
+    <div class="header-content">
+        <div class="site-title">Creativity Center</div>
+      
+    </div>
 
+    <!-- الأزرار الرئيسية في مكانها الأصلي -->
     <div class="button-grid">
         <button type="button" class="btn install" onclick="window.location.href='index-1.html'">
-            <i class="fa-solid fa-download"></i> Installation
+            <i class="fa-solid fa-screwdrivers-hardware"></i> Installation
         </button>
 
         <button type="button" class="btn maintenance" onclick="window.location.href='index-2.html'">
