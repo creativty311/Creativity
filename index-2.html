@@ -35,7 +35,6 @@
 body {
     text-align: center;
     background-color: var(--bg-dark);
-    /* خلفية برمجية شبكية احترافية بنبرة البرتقالي والنحاسي لتناسب أجهزة الصيانة */
     background-image: 
         radial-gradient(circle at 80% 15%, rgba(249, 115, 22, 0.12) 0%, transparent 40%),
         radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
@@ -49,7 +48,6 @@ body {
     position: relative;
 }
 
-/* زر العودة للرئيسية */
 .home-btn {
     position: absolute;
     top: 25px;
@@ -82,15 +80,11 @@ h1 {
     margin-bottom: 35px;
     letter-spacing: -0.5px;
     background: linear-gradient(135deg, #ffffff 30%, #fdba74 100%);
-    
-    /* أضف السطرين معاً لحل الخطأ */
     -webkit-background-clip: text;
     background-clip: text;
-    
     -webkit-text-fill-color: transparent;
 }
 
-/* أزرار التحكم الرئيسية */
 .btn-container {
     display: flex;
     justify-content: center;
@@ -143,7 +137,6 @@ button.main-btn:hover {
     color: white;
 }
 
-/* النافذة المنبثقة Modal */
 .modal {
     display: none;
     position: fixed;
@@ -154,6 +147,7 @@ button.main-btn:hover {
     background: rgba(4, 7, 13, 0.82);
     backdrop-filter: blur(10px);
     z-index: 1000;
+    overflow-y: auto;
 }
 
 .modal-content {
@@ -162,7 +156,7 @@ button.main-btn:hover {
     max-width: 480px;
     padding: 32px;
     border-radius: 20px;
-    margin: 50px auto;
+    margin: 40px auto;
     text-align: left;
     color: var(--text-main);
     position: relative;
@@ -239,7 +233,38 @@ textarea { resize: vertical; height: 80px; }
     background: linear-gradient(135deg, #c2410c, #9a3412);
 }
 
-/* جدول سجلات الصيانة للمسؤول */
+.payment-box {
+    background: rgba(249, 115, 22, 0.08);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.payment-box h3 {
+    font-size: 14px;
+    color: #fdba74;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.payment-box p {
+    font-size: 12.5px;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.payment-number {
+    display: inline-block;
+    background: #1e293b;
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: #facc15;
+    font-weight: 700;
+}
+
 .logs-container {
     display: none;
     max-width: 1100px;
@@ -300,7 +325,6 @@ td { color: #e5e7eb; }
     color: white;
 }
 
-/* تخصيص مظهر تنبيهات SweetAlert2 */
 .custom-swal-popup {
     background: #0f172a !important;
     border: 1px solid var(--border-color) !important;
@@ -351,6 +375,7 @@ td { color: #e5e7eb; }
                     <th>Customer Name</th>
                     <th>Phone / Contact</th>
                     <th>Location</th>
+                    <th>Payment Info</th>
                     <th>Details / Reasons</th>
                     <th>Actions</th>
                 </tr>
@@ -417,6 +442,17 @@ function openForm(type){
             <input type="text" id="field_location" placeholder="Enter installation location" required>
             <label><i class="fa-solid fa-comment-dots"></i> Problem Description / Notes</label>
             <textarea id="field_details" placeholder="Enter any specific requirements..." required></textarea>
+
+            <div class="payment-box">
+                <h3><i class="fa-solid fa-wallet"></i> Payment Details</h3>
+                <p>Transfer confirmation fee to wallet: <span class="payment-number">01144997914</span></p>
+                
+                <label><i class="fa-solid fa-mobile-screen"></i> Transferring Phone Number</label>
+                <input type="text" id="field_pay_sender" placeholder="Phone number used for transfer" required>
+                
+                <label><i class="fa-solid fa-receipt"></i> Transaction / Reference ID</label>
+                <input type="text" id="field_pay_tx" placeholder="Enter transaction reference code" required>
+            </div>
         `;
     } else {
         title.innerHTML = `<i class="fa-solid fa-ban"></i> Cancel Request`;
@@ -459,7 +495,9 @@ function handleSubmit(event) {
         name: document.getElementById("field_name").value,
         phone: document.getElementById("field_phone").value,
         location: document.getElementById("field_location").value,
-        details: document.getElementById("field_details").value
+        details: document.getElementById("field_details").value,
+        paySender: currentType === 'new' ? document.getElementById("field_pay_sender").value : 'N/A',
+        payTx: currentType === 'new' ? document.getElementById("field_pay_tx").value : 'N/A'
     };
 
     database.ref('maintenance/' + ticketId).set(requestData)
@@ -484,13 +522,15 @@ function listenToLiveRequests() {
         const data = snapshot.val();
         
         if (!data) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No maintenance requests active.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No maintenance requests active.</td></tr>`;
             return;
         }
 
         Object.keys(data).forEach(key => {
             const req = data[key];
             const typeBadge = req.type === 'new' ? '<span class="badge badge-new">NEW</span>' : '<span class="badge badge-cancel">CANCEL</span>';
+            const payInfo = req.type === 'new' ? `<small style="color:#facc15;">From: ${req.paySender || '-'}</small><br><small style="color:var(--text-muted);">Tx: ${req.payTx || '-'}</small>` : 'N/A';
+
             const row = `
                 <tr>
                     <td>${typeBadge} <br><small style="color:var(--text-muted); font-weight:600;">${req.dbId || ''}</small></td>
@@ -498,6 +538,7 @@ function listenToLiveRequests() {
                     <td>${req.name}</td>
                     <td>${req.phone}</td>
                     <td>${req.location}</td>
+                    <td>${payInfo}</td>
                     <td>${req.details}</td>
                     <td>
                         <button class="delete-btn" onclick="deleteLiveTicket('${req.dbId}')">
