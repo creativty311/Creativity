@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join to Creativity Center</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3598/3598209.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: linear-gradient(to bottom, rgba(5, 20, 60, 0.5), rgba(5, 20, 60, 0.7)), 
+                        url('bg.jpg') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 20px; position: relative;
+        }
+        .back-btn {
+            position: absolute; top: 25px; left: 30px; color: white; text-decoration: none; font-size: 15px; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.2); transform: translateX(-5px); }
+        .join-card {
+            background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px; padding: 40px; width: 100%; max-width: 900px; box-shadow: 0 0 30px rgba(138, 43, 226, 0.25);
+            margin-top: 50px;
+        }
+        .join-title {
+            font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 8px;
+            background: linear-gradient(135deg, #a855f7, #ec4899); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .join-subtitle { text-align: center; font-size: 14px; color: rgba(255, 255, 255, 0.7); margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: rgba(255, 255, 255, 0.9); }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-wrapper i { position: absolute; left: 16px; color: rgba(255, 255, 255, 0.5); font-size: 16px; pointer-events: none; }
+        .form-control {
+            width: 100%; padding: 14px 16px 14px 46px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px; color: white; font-size: 14px; outline: none; transition: all 0.3s ease;
+        }
+        .form-control:focus { border-color: #ec4899; background: rgba(255, 255, 255, 0.1); }
+        select.form-control option { background-color: #0f172a; color: white; }
+        .submit-btn {
+            width: 100%; padding: 16px; margin-top: 10px; border-radius: 50px; border: none;
+            background: linear-gradient(135deg, #8a2be2, #ff1493); color: white; font-size: 16px; font-weight: 700; cursor: pointer;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .submit-btn:hover { transform: translateY(-3px); }
+
+        /* Admin Table Styles */
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-size: 14px; }
+        th { background: rgba(255, 255, 255, 0.1); color: #ec4899; }
+        tr:hover { background: rgba(255, 255, 255, 0.05); }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; background: #8a2be2; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Main</a>
+
+    <div class="join-card">
+        <!-- User View: Form -->
+        <div id="userSection">
+            <div class="join-title">JOIN CREATIVITY</div>
+            <div class="join-subtitle">Fill in your details to connect with Creativity team </div>
+
+            <form id="joinForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label>FULL NAME</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="fullName" class="form-control" placeholder="Enter your full name" required>
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>EMAIL ADDRESS</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" class="form-control" placeholder="example@domain.com" required>
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>PHONE / WHATSAPP NUMBER</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="phone" class="form-control" placeholder="+20 123 456 789" required>
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>GOVERNORATE / المحافظة</label>
+                    <div class="input-wrapper">
+                        <select id="governorate" class="form-control" required>
+                            <option value="" disabled selected>اختر المحافظة / Select Governorate</option>
+                            <option value="المنوفية">المنوفية (Monufia)</option>
+                            <option value="القاهرة">القاهرة (Cairo)</option>
+                            <option value="الجيزة">الجيزة (Giza)</option>
+                            <option value="الإسكندرية">الإسكندرية (Alexandria)</option>
+                        </select>
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>INTERESTED FIELD</label>
+                    <div class="input-wrapper">
+                        <select id="field" class="form-control" required>
+                            <option value="" disabled selected>Select specialization</option>
+                            <option value="Network Installation">Network Installation</option>
+                            <option value="Hardware & Network Maintenance">Hardware & Network Maintenance</option>
+                            <option value="Network Administration">Network Administration</option>
+                            <option value="General Consultation">General Consultation</option>
+                        </select>
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>MESSAGE / NOTES (OPTIONAL)</label>
+                    <div class="input-wrapper">
+                        <textarea id="message" class="form-control" style="height: 80px; padding-top: 12px; resize: none;" placeholder="Write any additional details..."></textarea>
+                        <i class="fa-solid fa-comment-dots" style="top: 16px;"></i>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="submit-btn">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Application
+                </button>
+            </form>
+        </div>
+
+        <!-- Admin View: Requests List -->
+        <div id="adminSection" style="display: none;">
+            <div class="join-title">ADMIN PANEL - JOIN REQUESTS</div>
+            <div class="join-subtitle">All submitted user applications from Firebase</div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Governorate</th>
+                            <th>Field</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center;">Loading requests...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBV93xGbKln5RcaPP9VOTlmh5auKD04Zms",
+            authDomain: "creatitity-d09f7.firebaseapp.com",
+            databaseURL: "https://creatitity-d09f7-default-rtdb.firebaseio.com",
+            projectId: "creatitity-d09f7",
+            storageBucket: "creatitity-d09f7.appspot.com",
+            messagingSenderId: "591631410491",
+            appId: "1:591631410491:web:ff000c0a8d2f030f57031e"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Check Admin state on Load
+        document.addEventListener("DOMContentLoaded", () => {
+            const isAdmin = sessionStorage.getItem("isAdmin");
+            if (isAdmin === "true") {
+                document.getElementById("userSection").style.display = "none";
+                document.getElementById("adminSection").style.display = "block";
+                loadJoinRequests();
+            } else {
+                document.getElementById("userSection").style.display = "block";
+                document.getElementById("adminSection").style.display = "none";
+            }
+        });
+
+        // Submit form for Users
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+
+            const ticketId = "JOIN-" + Math.floor(1000 + Math.random() * 9000);
+
+            const newJoinRequest = {
+                dbId: ticketId,
+                name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                governorate: document.getElementById('governorate').value,
+                field: document.getElementById('field').value,
+                message: document.getElementById('message').value || "No Message",
+                timestamp: new Date().toISOString()
+            };
+
+            database.ref('joinRequests/' + ticketId).set(newJoinRequest)
+            .then(() => {
+                Swal.fire({
+                    title: 'Global Success!',
+                    text: `Your Join Application registered online. Code: ${ticketId}`,
+                    icon: 'success',
+                    confirmButtonColor: '#8a2be2',
+                    confirmButtonText: ' OK '
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+            })
+            .catch((error) => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Submit Application`;
+                Swal.fire('Error', error.message, 'error');
+            });
+        }
+
+        // Fetch & render data for Admin
+        function loadJoinRequests() {
+            const tableBody = document.getElementById("requestsTableBody");
+
+            database.ref('joinRequests').once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (!data) {
+                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">No join requests found.</td></tr>`;
+                    return;
+                }
+
+                let rows = '';
+                Object.keys(data).forEach((key) => {
+                    const req = data[key];
+                    rows += `
+                        <tr>
+                            <td><span class="badge">${req.dbId || key}</span></td>
+                            <td>${req.name || '-'}</td>
+                            <td>${req.email || '-'}</td>
+                            <td>${req.phone || '-'}</td>
+                            <td>${req.governorate || '-'}</td>
+                            <td>${req.field || '-'}</td>
+                            <td>${req.message || '-'}</td>
+                        </tr>
+                    `;
+                });
+
+                tableBody.innerHTML = rows;
+            }).catch((error) => {
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
+            });
+        }
+    </script>
+</body>
+</html>
