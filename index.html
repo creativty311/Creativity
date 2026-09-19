@@ -20,7 +20,7 @@
 
         body {
             background: linear-gradient(to bottom, rgba(5, 20, 60, 0.35), rgba(5, 20, 60, 0.5)), 
-                        url('uuuu.jpg') no-repeat center center fixed;
+                        url('bg.jpg') no-repeat center center fixed;
             background-size: cover;
             height: 100vh;
             display: flex;
@@ -74,10 +74,10 @@
         .social-links a:nth-child(1) { background-color: #1877f2; }
         .social-links a:nth-child(2) { background-color: #25d366; }
 
-        /* الحاوية المخصصة للعنوان والوصف لرفعهما للأعلى */
+        /* الحاوية المخصصة للعنوان والوصف */
         .header-content {
             margin-bottom: 45px;
-            transform: translateY(-20px); /* رفع العنوان والوصف فقط للأعلى */
+            transform: translateY(-20px);
         }
 
         .site-title {
@@ -88,8 +88,6 @@
             text-shadow: 0 2px 8px rgba(0,0,0,0.7);
             letter-spacing: 0.5px;
         }
-
-        
 
         /* شبكة الأزرار الوسطى */
         .button-grid {
@@ -163,21 +161,51 @@
             background: linear-gradient(135deg, #14b8a6, #0d9488);
         }
 
-        /* زر دخول المسؤول أسفل اليمين */
+        /* زر JOIN TO CREATIVITY مع توهج نيون وتدرج بنفسجي ووردي */
+        .join-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #8a2be2, #ff1493);
+            color: white;
+            padding: 10px 10px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px #8a2be2, 0 0 30px #ff1493, 0 0 45px rgba(190 , 10, 140, 0.5);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .join-btn:hover {
+            transform: translateX(-50%) scale(1.06);
+            box-shadow: 0 0 20px #8a2be2, 0 0 40px #ff1493, 0 0 60px #ff1493;
+        }
+
+        /* تصغير زر LOGIN AS ADMIN */
         .admin-login-btn {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 10px;
+            right: 10px;
             background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            padding: 10px 18px;
-            border-radius: 30px;
-            font-size: 13px;
+            padding: 6px 6px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            z-index: 1000;
         }
 
         .admin-login-btn:hover {
@@ -192,14 +220,64 @@
             left: 20px;
             background: #10b981;
             color: white;
-            padding: 10px 18px;
-            border-radius: 30px;
-            font-size: 13px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 600;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             display: none;
             z-index: 10000;
             cursor: pointer;
+        }
+
+        /* --- تنسيقات نافذة SweetAlert لتطابق ألوان وتوهج زر JOIN --- */
+        .neon-swal-popup {
+            background: rgba(15, 12, 41, 0.92) !important;
+            border: 2px solid #ff1493 !important;
+            border-radius: 20px !important;
+            box-shadow: 0 0 20px #8a2be2, 0 0 40px #ff1493 !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .neon-swal-title {
+            color: #ffffff !important;
+            text-shadow: 0 0 10px #ff1493, 0 0 20px #8a2be2;
+            font-weight: 700 !important;
+        }
+
+        .custom-input {
+            width: 80% !important;
+            font-size: 14px !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 20, 147, 0.5) !important;
+            color: #ffffff !important;
+            border-radius: 10px !important;
+            margin: 10px auto !important;
+        }
+
+        .custom-input:focus {
+            border-color: #ff1493 !important;
+            box-shadow: 0 0 10px #ff1493 !important;
+        }
+
+        .custom-input::placeholder {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        .neon-swal-confirm {
+            background: linear-gradient(135deg, #8a2be2, #ff1493) !important;
+            color: #ffffff !important;
+            border-radius: 25px !important;
+            border: none !important;
+            font-weight: 600 !important;
+            box-shadow: 0 0 10px #8a2be2, 0 0 20px #ff1493 !important;
+        }
+
+        .neon-swal-cancel {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+            border-radius: 25px !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
         }
     </style>
 </head>
@@ -224,13 +302,10 @@
         </a>
     </div>
 
-    <!-- العنوان والوصف فقط مرفوعين للأعلى -->
     <div class="header-content">
         <div class="site-title">Creativity Center</div>
-      
     </div>
 
-    <!-- الأزرار الرئيسية في مكانها الأصلي -->
     <div class="button-grid">
         <button type="button" class="btn install" onclick="window.location.href='index-1.html'">
             <i class="fa-solid fa-screwdrivers-hardware"></i> Installation
@@ -249,7 +324,20 @@
         </button>
     </div>
 
+    <!-- زر الانضمام -->
+    <button type="button" class="join-btn" onclick="window.location.href='index-5.html'">
+        <i ></i> JOIN TO CREATIVITY
+    </button>
+
     <script>
+    // قائمة الحسابات المصرح لها بالدخول كأدمن (4 أشخاص)
+    const adminUsers = [
+        { username: "admin1", pass: "123" },
+        { username: "admin2", pass: "44" },
+        { username: "admin3", pass: "55" },
+        { username: "admin4", pass: "2532006" }
+    ];
+
     document.addEventListener("DOMContentLoaded", () => {
         checkAdminStatus();
     });
@@ -271,26 +359,58 @@
     function loginAsAdmin() {
         Swal.fire({
             title: 'Admin Authorization',
-            input: 'password',
-            inputPlaceholder: 'Enter Admin Secret Key',
-            inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
+            html: `
+                <input type="text" id="swal-username" class="swal2-input custom-input" placeholder="Username">
+                <input type="password" id="swal-password" class="swal2-input custom-input" placeholder="Password">
+            `,
+            focusConfirm: false,
             showCancelButton: true,
             confirmButtonText: 'Access Terminal',
-            confirmButtonColor: '#2563eb'
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: 'transparent',
+            customClass: {
+                popup: 'neon-swal-popup',
+                title: 'neon-swal-title',
+                confirmButton: 'neon-swal-confirm',
+                cancelButton: 'neon-swal-cancel'
+            },
+            preConfirm: () => {
+                const username = document.getElementById('swal-username').value.trim();
+                const password = document.getElementById('swal-password').value.trim();
+                
+                if (!username || !password) {
+                    Swal.showValidationMessage('Please enter both username and password');
+                    return false;
+                }
+                return { username: username, password: password };
+            }
         }).then((result) => {
-            if (result.value === '2532006') { 
-                sessionStorage.setItem("isAdmin", "true");
-                Swal.fire({
-                    title: 'Access Granted!',
-                    text: 'You are now logged in as System Administrator.',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
-                    checkAdminStatus();
-                });
-            } else if (result.value !== undefined) {
-                Swal.fire('Access Denied', 'Incorrect security key provided.', 'error');
+            if (result.isConfirmed) {
+                const { username, password } = result.value;
+                const validUser = adminUsers.find(u => u.username === username && u.pass === password);
+
+                if (validUser) {
+                    sessionStorage.setItem("isAdmin", "true");
+                    sessionStorage.setItem("currentAdmin", username);
+                    
+                    Swal.fire({
+                        title: 'Access Granted!',
+                        text: `Welcome back, ${username}!`,
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title' }
+                    }).then(() => {
+                        checkAdminStatus();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Access Denied',
+                        text: 'Invalid username or password.',
+                        icon: 'error',
+                        customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title' }
+                    });
+                }
             }
         });
     }
@@ -302,11 +422,23 @@
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Yes, Logout'
+            confirmButtonText: 'Yes, Logout',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'neon-swal-popup',
+                title: 'neon-swal-title',
+                cancelButton: 'neon-swal-cancel'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 sessionStorage.removeItem("isAdmin");
-                Swal.fire('Logged Out', 'Admin session terminated.', 'info').then(() => {
+                sessionStorage.removeItem("currentAdmin");
+                Swal.fire({
+                    title: 'Logged Out',
+                    text: 'Admin session terminated.',
+                    icon: 'info',
+                    customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title' }
+                }).then(() => {
                     checkAdminStatus();
                 });
             }
