@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Maintenance Management System</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -13,48 +13,312 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <style>
-* { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-body { text-align: center; background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; margin: 0; padding: 50px 20px; min-height: 100vh; }
-h1 { font-size: 2.5rem; margin-bottom: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-.btn-container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
-button.main-btn { width: 240px; height: 55px; font-size: 18px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; gap: 10px; }
-.btn-new { background: #ffffff; color: #1e3c72; }
-.btn-cancel { background: #ff4d4d; color: white; }
-button.main-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 1000; }
-.modal-content { background: white; width: 100%; max-width: 480px; padding: 30px; border-radius: 20px; margin: 50px auto; text-align: left; color: #333; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #aaa; transition: 0.2s; }
-.close:hover { color: #000; }
-label { font-weight: bold; display: block; margin-top: 15px; color: #444; font-size: 14px; }
-input, select, textarea { width: 100%; padding: 12px; margin-top: 6px; border: 1.5px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; font-size: 15px; }
-input:focus, select:focus, textarea:focus { border-color: #2a5298; box-shadow: 0 0 8px rgba(42, 82, 152, 0.2); }
-textarea { resize: vertical; height: 80px; }
-.save-btn { width: 100%; background: #2a5298; color: white; font-size: 18px; border: none; border-radius: 10px; padding: 12px; margin-top: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-.save-btn:hover { background: #1e3c72; }
+:root {
+    --bg-dark: #080d1a;
+    --card-bg: rgba(15, 23, 42, 0.75);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --accent-orange: #f97316;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-red: #ef4444;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+}
 
-/* 🔒 تم ضبط الحاوية لتكون مخفية تلقائياً (display: none) */
-.logs-container { display: none; max-width: 1000px; margin: 20px auto; background: white; color: #333; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); text-align: left; }
-.logs-container h2 { color: #1e3c72; margin-bottom: 15px; font-size: 22px; display: flex; align-items: center; gap: 10px; }
+* {
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    text-align: center;
+    background-color: var(--bg-dark);
+    /* خلفية برمجية شبكية احترافية بنبرة البرتقالي والنحاسي لتناسب أجهزة الصيانة */
+    background-image: 
+        radial-gradient(circle at 80% 15%, rgba(249, 115, 22, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 35px 35px, 35px 35px;
+    background-attachment: fixed;
+    color: var(--text-main);
+    padding: 40px 20px;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* زر العودة للرئيسية */
+.home-btn {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.home-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-top: 50px;
+    margin-bottom: 35px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 30%, #fdba74 100%);
+    
+    /* أضف السطرين معاً لحل الخطأ */
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    -webkit-text-fill-color: transparent;
+}
+
+/* أزرار التحكم الرئيسية */
+.btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+}
+
+button.main-btn {
+    width: 240px;
+    height: 54px;
+    font-size: 15px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    letter-spacing: 0.2px;
+}
+
+.btn-new {
+    background: linear-gradient(135deg, #ea580c, #c2410c);
+    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-cancel {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+button.main-btn:hover {
+    transform: translateY(-3px);
+}
+
+.btn-new:hover {
+    box-shadow: 0 12px 25px rgba(234, 88, 12, 0.4);
+    background: linear-gradient(135deg, #c2410c, #9a3412);
+}
+
+.btn-cancel:hover {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: white;
+}
+
+/* النافذة المنبثقة Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(4, 7, 13, 0.82);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #0f172a;
+    width: 90%;
+    max-width: 480px;
+    padding: 32px;
+    border-radius: 20px;
+    margin: 50px auto;
+    text-align: left;
+    color: var(--text-main);
+    position: relative;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: 0.2s;
+}
+
+.close:hover { color: white; }
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-top: 16px;
+    color: #d1d5db;
+    font-size: 13px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 6px;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: white;
+}
+
+select option {
+    background: #1e293b;
+    color: white;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--accent-orange);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+}
+
+textarea { resize: vertical; height: 80px; }
+
+.save-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #ea580c, #c2410c);
+    color: white;
+    font-size: 15px;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 25px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.save-btn:hover {
+    background: linear-gradient(135deg, #c2410c, #9a3412);
+}
+
+/* جدول سجلات الصيانة للمسؤول */
+.logs-container {
+    display: none;
+    max-width: 1100px;
+    margin: 30px auto;
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    color: white;
+    padding: 28px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    text-align: left;
+}
+
+.logs-container h2 {
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .table-wrapper { overflow-x: auto; }
+
 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
-th { background-color: #f4f6f9; color: #1e3c72; font-weight: bold; }
-.badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; color: white; }
-.badge-new { background-color: #2a5298; }
-.badge-cancel { background-color: #ff4d4d; }
-.delete-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-.delete-btn:hover { background: #cc3333; }
-.home-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block; margin-bottom: 20px; transition: 0.3s; }
-.home-btn:hover { background: white; color: #1e3c72; }
+
+th, td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); text-align: left; font-size: 13.5px; }
+
+th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: #fdba74;
+    font-weight: 700;
+}
+
+td { color: #e5e7eb; }
+
+.badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; }
+
+.badge-new { background: rgba(249, 115, 22, 0.18); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3); }
+.badge-cancel { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+.delete-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+    color: white;
+}
+
+/* تخصيص مظهر تنبيهات SweetAlert2 */
+.custom-swal-popup {
+    background: #0f172a !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    color: white !important;
+}
+
+.custom-swal-title {
+    color: #ffffff !important;
+}
 </style>
 </head>
 
 <body>
-<br>
-<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to  Home</a>
 
-<h1><i class="fa-solid fa-screwdriver-wrench"></i> Maintenance Request System</h1>
+<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+
+<h1><i class="fa-solid fa-wrench"></i> Maintenance Request System</h1>
 
 <div class="btn-container">
     <button class="main-btn btn-new" onclick="openForm('new')">
@@ -68,7 +332,7 @@ th { background-color: #f4f6f9; color: #1e3c72; font-weight: bold; }
 <div id="myForm" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeForm()">&times;</span>
-        <h2 id="modalTitle" style="margin-top: 0; color: #1e3c72;"><i class="fa-solid fa-file-invoice"></i> Request Details</h2>
+        <h2 id="modalTitle" style="margin-top: 0; color: #ffffff;"><i class="fa-solid fa-file-invoice"></i> Request Details</h2>
         <form id="installationForm" onsubmit="handleSubmit(event)">
             <div id="dynamicFields"></div>
             <button type="submit" id="submitBtn" class="save-btn">Send Request</button>
@@ -112,12 +376,11 @@ const database = firebase.database();
 
 let currentType = 'new';
 
-// فحص الصلاحية عند فتح الصفحة فوراً
 document.addEventListener("DOMContentLoaded", () => {
     const isAdmin = sessionStorage.getItem("isAdmin");
     if (isAdmin === "true") {
-        document.getElementById("adminSection").style.display = "block"; // إظهار الحاوية للمسؤول
-        listenToLiveRequests(); // تشغيل ربط البيانات الحية
+        document.getElementById("adminSection").style.display = "block";
+        listenToLiveRequests();
     }
 });
 
@@ -133,22 +396,19 @@ function openForm(type){
     if(type === 'new') {
         title.innerHTML = `<i class="fa-solid fa-plus-circle"></i> New Maintenance Request`;
         submitBtn.innerHTML = `Submit Ticket`;
-        submitBtn.style.background = "#2a5298";
+        submitBtn.style.background = "linear-gradient(135deg, #ea580c, #c2410c)";
         
         dynamicFields.innerHTML = `
-            <label><i class="fa-solid fa-microchip"></i> Device /system   Type</label>
+            <label><i class="fa-solid fa-microchip"></i> Device / System Type</label>
             <select id="field_device" required>
                 <option value="">-- Select Device --</option>
                 <option>Security Cameras</option>
                 <option>LAN/WAN Networks</option>
-                <option> VLANs </option>
+                <option>VLANs</option>
                 <option>Windows Server</option>
                 <option>Firewall and Security</option>
-                <option> Other </option>
-
+                <option>Other</option>
             </select>
-
-    
             <label><i class="fa-solid fa-user"></i> Customer Name</label>
             <input type="text" id="field_name" placeholder="Enter customer full name" required>
             <label><i class="fa-solid fa-phone"></i> Phone Number</label>
@@ -161,7 +421,7 @@ function openForm(type){
     } else {
         title.innerHTML = `<i class="fa-solid fa-ban"></i> Cancel Request`;
         submitBtn.innerHTML = `Confirm Cancellation`;
-        submitBtn.style.background = "#ff4d4d";
+        submitBtn.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
         
         dynamicFields.innerHTML = `
             <label><i class="fa-solid fa-hashtag"></i> Ticket Code ID to Cancel</label>
@@ -209,7 +469,10 @@ function handleSubmit(event) {
             title: 'Cloud Received!',
             text: `Maintenance ticket registered globally with ID: ${ticketId}`,
             icon: 'success',
-            confirmButtonColor: '#2a5298'
+            customClass: {
+                popup: 'custom-swal-popup',
+                title: 'custom-swal-title'
+            }
         });
     });
 }
@@ -221,16 +484,16 @@ function listenToLiveRequests() {
         const data = snapshot.val();
         
         if (!data) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#999;">No maintenance requests active.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No maintenance requests active.</td></tr>`;
             return;
         }
 
         Object.keys(data).forEach(key => {
             const req = data[key];
             const typeBadge = req.type === 'new' ? '<span class="badge badge-new">NEW</span>' : '<span class="badge badge-cancel">CANCEL</span>';
-            tableBody.innerHTML += `
+            const row = `
                 <tr>
-                    <td>${typeBadge} <br><small style="color:#777; font-weight:bold;">${req.dbId || ''}</small></td>
+                    <td>${typeBadge} <br><small style="color:var(--text-muted); font-weight:600;">${req.dbId || ''}</small></td>
                     <td><strong>${req.device}</strong></td>
                     <td>${req.name}</td>
                     <td>${req.phone}</td>
@@ -243,6 +506,7 @@ function listenToLiveRequests() {
                     </td>
                 </tr>
             `;
+            tableBody.innerHTML += row;
         });
     });
 }
@@ -253,11 +517,27 @@ function deleteLiveTicket(id) {
         text: "This deletes the data for all users globally!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ff4d4d',
-        confirmButtonText: 'Yes, Wipe Log'
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Yes, Wipe Log',
+        cancelButtonText: 'Cancel',
+        customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
-            database.ref('maintenance/' + id).remove();
+            database.ref('maintenance/' + id).remove()
+            .then(() => {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Ticket removed from system servers.',
+                    icon: 'success',
+                    customClass: {
+                        popup: 'custom-swal-popup',
+                        title: 'custom-swal-title'
+                    }
+                });
+            });
         }
     });
 }
