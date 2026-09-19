@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Network Administrator Terminal</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -12,40 +13,103 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <style>
+:root {
+    --bg-dark: #080d1a;
+    --card-bg: rgba(15, 23, 42, 0.75);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --accent-purple: #8b5cf6;
+    --accent-indigo: #6366f1;
+    --accent-blue: #3b82f6;
+    --accent-red: #ef4444;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     text-align: center;
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    font-family: Arial, sans-serif;
-    color: white;
-    padding: 50px 20px;
-    margin: 0;
+    background-color: var(--bg-dark);
+    /* خلفية شبكية برمجية بلمسات نيون بنفسجية */
+    background-image: 
+        radial-gradient(circle at 80% 15%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 35px 35px, 35px 35px;
+    background-attachment: fixed;
+    color: var(--text-main);
+    padding: 40px 20px;
     min-height: 100vh;
+    position: relative;
+}
+
+/* زر العودة للرئيسية */
+.home-btn {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.home-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
 }
 
 h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-top: 50px;
+    margin-bottom: 35px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 30%, #c084fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* الأزرار */
+/* أزرار التحكم */
 button.action-btn {
     width: 240px;
-    height: 50px;
-    font-size: 18px;
-    border: none;
-    border-radius: 12px;
+    height: 54px;
+    font-size: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
     cursor: pointer;
-    margin-top: 20px;
-    background: white;
-    color: #333;
-    font-weight: bold;
-    transition: 0.3s;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-weight: 700;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: white;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 button.action-btn:hover {
-    transform: scale(1.05);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(139, 92, 246, 0.45);
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
 }
 
 /* النافذة المنبثقة Modal */
@@ -56,147 +120,211 @@ button.action-btn:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(5px);
+    background: rgba(4, 7, 13, 0.82);
+    backdrop-filter: blur(10px);
     z-index: 1000;
 }
 
-/* بطاقة النموذج */
 .modal-content {
-    background: white;
-    width: 100%;
-    max-width: 440px;
-    padding: 30px;
+    background: #0f172a;
+    width: 90%;
+    max-width: 460px;
+    padding: 32px;
     border-radius: 20px;
-    margin: 40px auto;
+    margin: 50px auto;
     text-align: left;
-    color: #333;
+    color: var(--text-main);
     position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
+    from { opacity: 0; transform: translateY(-15px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 .close {
     position: absolute;
-    top: 15px;
+    top: 20px;
     right: 20px;
-    font-size: 28px;
+    font-size: 22px;
     cursor: pointer;
-    color: #aaa;
+    color: var(--text-muted);
     transition: 0.2s;
 }
 
-.close:hover { color: #000; }
+.close:hover { color: white; }
 
 label {
-    font-weight: bold;
+    font-weight: 600;
     display: block;
-    margin-top: 15px;
-    color: #444;
+    margin-top: 16px;
+    color: #d1d5db;
+    font-size: 13px;
 }
 
 input, select {
     width: 100%;
-    padding: 12px;
+    padding: 12px 14px;
     margin-top: 6px;
-    border: 1.5px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
     outline: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: white;
+}
+
+select option {
+    background: #1e293b;
+    color: white;
+}
+
+input:focus, select:focus {
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
 .save-btn {
     width: 100%;
-    background: #2575fc;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
     color: white;
-    font-size: 18px;
+    font-size: 15px;
     border: none;
-    border-radius: 10px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 14px;
     margin-top: 25px;
     cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
+    font-weight: 700;
+    transition: all 0.2s ease;
 }
 
 .save-btn:hover {
-    background: #1a5fd4;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
 }
 
-/* 🔒 حاوية جدول المسؤول (مخفية تلقائياً) */
+/* جدول سجلات الإدارة */
 .logs-container {
     display: none;
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 40px auto;
-    background: white;
-    color: #333;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    color: white;
+    padding: 28px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     text-align: left;
 }
 
 .logs-container h2 {
-    color: #6a11cb;
-    margin-bottom: 15px;
-    font-size: 22px;
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .table-wrapper { overflow-x: auto; }
+
 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
-th { background-color: #f4f6f9; color: #6a11cb; font-weight: bold; }
-.delete-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-.delete-btn:hover { background: #cc3333; }
-.home-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block; margin-bottom: 20px; transition: 0.3s; }
-.home-btn:hover { background: white; color: #6a11cb; }
+
+th, td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); text-align: left; font-size: 13.5px; }
+
+th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: #c084fc;
+    font-weight: 700;
+}
+
+td { color: #e5e7eb; }
+
+.ticket-badge {
+    color: #c084fc;
+    font-weight: 700;
+    background: rgba(139, 92, 246, 0.15);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    display: inline-block;
+}
+
+.delete-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+    color: white;
+}
+
+/* تخصيص SweetAlert2 */
+.custom-swal-popup {
+    background: #0f172a !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    color: white !important;
+}
+
+.custom-swal-title {
+    color: #ffffff !important;
+}
 </style>
 </head>
 
 <body>
 
-<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to  Home</a>
+<a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
 
-<h1>Submit a request to the network administrator</h1>
+<h1><i class="fa-solid fa-network-wired"></i> Submit Request to Network Administrator</h1>
 
-<button class="action-btn" onclick="openForm()">New Submit</button>
+<button class="action-btn" onclick="openForm()">
+    <i class="fa-solid fa-paper-plane"></i> New Submit
+</button>
 
 <div id="myForm" class="modal">
     <div class="modal-content">
 
         <span class="close" onclick="closeForm()">&times;</span>
 
-        <h2>Submit Ticket</h2>
+        <h2 style="margin-top:0; color:#ffffff; font-size: 20px;"><i class="fa-solid fa-ticket"></i> Submit Ticket</h2>
 
         <form id="adminForm" onsubmit="handleSubmit(event)">
-            <label>Device Type</label>
+            <label><i class="fa-solid fa-microchip"></i> Device Type</label>
             <select id="field_device" required>
                 <option value="">-- Select system --</option>
                 <option>Security Cameras</option>
-                <option> LAN/WAN Networks </option>
-                <option>Setting Up VLANs </option>
+                <option>LAN/WAN Networks</option>
+                <option>Setting Up VLANs</option>
                 <option>Windows Server</option>
                 <option>Firewall and Security</option>
-                <option> Other </option>
+                <option>Other</option>
             </select>
-             
 
-
-            <label>Customer Name</label>
+            <label><i class="fa-solid fa-user"></i> Customer Name</label>
             <input type="text" id="field_name" placeholder="Enter customer full name" required>
 
-            <label>Phone Number</label>
-            <input type="number" id="field_phone" placeholder="Enter phone number" required>
+            <label><i class="fa-solid fa-phone"></i> Phone Number</label>
+            <input type="text" id="field_phone" placeholder="Enter phone number" required>
 
-            <label>Location</label>
+            <label><i class="fa-solid fa-location-dot"></i> Location</label>
             <input type="text" id="field_location" placeholder="Enter location" required>
 
-            <label>System Details</label>
+            <label><i class="fa-solid fa-file-lines"></i> System Details</label>
             <input type="text" id="field_details" placeholder="Describe the issue" required>
 
             <button type="submit" class="save-btn">Send Request</button>
@@ -226,7 +354,6 @@ th { background-color: #f4f6f9; color: #6a11cb; font-weight: bold; }
 </div>
 
 <script>
-// إعدادات الـ Firebase الخاصة بسيستمك المشترك
 const firebaseConfig = {
     apiKey: "AIzaSyBV93xGbKln5RcaPP9VOTlmh5auKD04Zms",
     authDomain: "creatitity-d09f7.firebaseapp.com",
@@ -237,16 +364,14 @@ const firebaseConfig = {
     appId: "1:591631410491:web:ff000c0a8d2f030f57031e"
 };
 
-// تشغيل فايربيز
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// فحص صلاحية المسؤول فور تحميل الصفحة
 document.addEventListener("DOMContentLoaded", () => {
     const isAdmin = sessionStorage.getItem("isAdmin");
     if (isAdmin === "true") {
-        document.getElementById("adminSection").style.display = "block"; // إظهار الجدول للمسؤول فقط
-        listenToLiveRequests(); // البدء في قراءة البيانات الحية من السيرفر
+        document.getElementById("adminSection").style.display = "block";
+        listenToLiveRequests();
     }
 });
 
@@ -264,7 +389,6 @@ window.onclick = function(event){
     if(event.target == modal){ closeForm(); }
 }
 
-// دالة إرسال الطلب وحفظه بالـ Firebase
 function handleSubmit(event) {
     event.preventDefault();
     const ticketId = "ADM-" + Math.floor(1000 + Math.random() * 9000);
@@ -285,12 +409,14 @@ function handleSubmit(event) {
             title: 'Request Sent Successfully!',
             text: `Admin Ticket created with Code: ${ticketId}`,
             icon: 'success',
-            confirmButtonColor: '#2575fc'
+            customClass: {
+                popup: 'custom-swal-popup',
+                title: 'custom-swal-title'
+            }
         });
     });
 }
 
-// دالة جلب البيانات وعرضها في الجدول للمسؤول بشكل حي
 function listenToLiveRequests() {
     database.ref('administration').on('value', (snapshot) => {
         const tableBody = document.getElementById("logsTableBody");
@@ -298,7 +424,7 @@ function listenToLiveRequests() {
         const data = snapshot.val();
         
         if (!data) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#999;">No admin tasks registered in the cloud database.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No admin tasks registered in the cloud database.</td></tr>`;
             return;
         }
 
@@ -306,7 +432,7 @@ function listenToLiveRequests() {
             const req = data[key];
             tableBody.innerHTML += `
                 <tr>
-                    <td><strong style="color:#6a11cb;">${req.dbId || ''}</strong></td>
+                    <td><span class="ticket-badge">${req.dbId || ''}</span></td>
                     <td><strong>${req.device}</strong></td>
                     <td>${req.name}</td>
                     <td>${req.phone}</td>
@@ -323,20 +449,32 @@ function listenToLiveRequests() {
     });
 }
 
-// دالة الحذف من السيرفر السحابي للمسؤول
 function deleteLiveTicket(id) {
     Swal.fire({
         title: 'Delete admin log?',
         text: "This deletes the ticket from the global cloud servers completely!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ff4d4d',
-        confirmButtonText: 'Yes, Delete Ticket'
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Yes, Delete Ticket',
+        cancelButtonText: 'Cancel',
+        customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             database.ref('administration/' + id).remove()
             .then(() => {
-                Swal.fire('Deleted!', 'Admin task successfully cleared.', 'success');
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Admin task successfully cleared.',
+                    icon: 'success',
+                    customClass: {
+                        popup: 'custom-swal-popup',
+                        title: 'custom-swal-title'
+                    }
+                });
             });
         }
     });
