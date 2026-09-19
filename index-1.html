@@ -48,7 +48,6 @@ body {
     position: relative;
 }
 
-/* أزرار الهيدر */
 .nav-buttons {
     position: absolute;
     top: 25px;
@@ -57,7 +56,7 @@ body {
     gap: 10px;
 }
 
-.home-btn, .admin-login-btn {
+.home-btn {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
@@ -74,7 +73,7 @@ body {
     cursor: pointer;
 }
 
-.home-btn:hover, .admin-login-btn:hover {
+.home-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
@@ -132,7 +131,6 @@ button.main-btn:hover { transform: translateY(-3px); }
 .btn-new:hover { background: linear-gradient(135deg, #1d4ed8, #1e40af); }
 .btn-cancel:hover { background: rgba(239, 68, 68, 0.25); color: white; }
 
-/* النافذة المنبثقة Modal */
 .modal {
     display: none;
     position: fixed;
@@ -196,7 +194,6 @@ input, select, textarea {
     color: white;
 }
 
-/* مربع الدفع المميز */
 .payment-box {
     background: rgba(59, 130, 246, 0.08);
     border: 1px solid rgba(59, 130, 246, 0.3);
@@ -229,7 +226,6 @@ input, select, textarea {
     font-weight: 700;
 }
 
-/* أزرار التنقل */
 .form-actions {
     display: flex;
     gap: 12px;
@@ -266,7 +262,6 @@ input, select, textarea {
 .form-step { display: none; }
 .form-step.active { display: block; }
 
-/* جدول السجلات */
 .logs-container {
     display: none;
     max-width: 1100px;
@@ -310,7 +305,7 @@ td { color: #e5e7eb; }
     <a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
 </div>
 
-<h1><i class=""></i> Installation Request System</h1>
+<h1><i class="fa-solid fa-screwdriver-wrench"></i> Installation Request System</h1>
 
 <div class="btn-container">
     <button class="main-btn btn-new" onclick="openForm('new')">
@@ -321,14 +316,13 @@ td { color: #e5e7eb; }
     </button>
 </div>
 
-<!-- النافذة المنبثقة متعددة المراحل -->
 <div id="myForm" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeForm()">&times;</span>
         <h2 id="modalTitle" style="margin-top: 0; color: #ffffff;"><i class="fa-solid fa-file-invoice"></i> Request Details</h2>
         
         <form id="installationForm" onsubmit="handleSubmit(event)">
-            <!-- المرحلة الأولى: البيانات الأساسية -->
+            <!-- الخطوة 1: البيانات الأساسية -->
             <div id="step1" class="form-step active">
                 <div id="step1Fields"></div>
                 <div class="form-actions">
@@ -336,11 +330,11 @@ td { color: #e5e7eb; }
                 </div>
             </div>
 
-            <!-- المرحلة الثانية: تفاصيل الدفع (تظهر في حال الطلب الجديد فقط) -->
+            <!-- الخطوة 2: شاشة الدفع (تظهر بعد الضغط على Next) -->
             <div id="step2" class="form-step">
                 <div class="payment-box">
                     <h3><i class="fa-solid fa-wallet"></i> Confirmation Fee (50 EGP)</h3>
-                    <p>Please transfer <strong>50 EGP</strong> via Vodafone Cash or InstaPay to: <br><span class="payment-number">01144997914</span></p>
+                    <p>Please transfer <strong>50 EGP</strong> via Vodafone Cash  to: <br><span class="payment-number">01144997914</span></p>
                     
                     <label><i class="fa-solid fa-mobile-screen"></i> Sender Phone / Account Number</label>
                     <input type="text" id="field_pay_sender" placeholder="Phone number you transferred from">
@@ -357,9 +351,6 @@ td { color: #e5e7eb; }
         </form>
     </div>
 </div>
-
-<!-- تسجيل دخول الأدمن -->
-
 
 <div class="logs-container" id="adminSection">
     <h2><i class="fa-solid fa-folder-open"></i> Submitted Live Database Logs</h2>
@@ -383,8 +374,6 @@ td { color: #e5e7eb; }
 </div>
 
 <script>
-
-
 const firebaseConfig = {
     apiKey: "AIzaSyBV93xGbKln5RcaPP9VOTlmh5auKD04Zms",
     authDomain: "creatitity-d09f7.firebaseapp.com",
@@ -401,7 +390,11 @@ const database = firebase.database();
 let currentType = 'new';
 
 document.addEventListener("DOMContentLoaded", () => {
-    checkAdminAccess();
+    const isAdmin = sessionStorage.getItem("isAdmin");
+    if (isAdmin === "true") {
+        document.getElementById("adminSection").style.display = "block";
+        listenToLiveRequests();
+    }
 });
 
 function openForm(type){
@@ -420,11 +413,11 @@ function openForm(type){
             <select id="field_device" required>
                 <option value="">-- Select system --</option>
                 <option>Security Cameras</option>
-                <option> LAN/WAN Networks </option>
-                <option>Setting Up VLANs </option>
+                <option>LAN/WAN Networks</option>
+                <option>Setting Up VLANs</option>
                 <option>Windows Server</option>
                 <option>Firewall and Security</option>
-                <option> Other </option>
+                <option>Other</option>
             </select>
             <label><i class="fa-solid fa-user"></i> Customer Name</label>
             <input type="text" id="field_name" placeholder="Enter customer full name" required>
@@ -458,7 +451,6 @@ function goToStep1() {
 }
 
 function goToStep2() {
-    // التحقق من أن جميع حقول الخطوة الأولى ممتلئة
     const device = document.getElementById("field_device").value.trim();
     const name = document.getElementById("field_name").value.trim();
     const phone = document.getElementById("field_phone").value.trim();
@@ -476,7 +468,6 @@ function goToStep2() {
     }
 
     if(currentType === 'cancel') {
-        // إذا كان إلغاء يتم الحفظ فوراً دون الحاجة لمرحلة الدفع
         handleSubmitDirect();
     } else {
         document.getElementById("step1").classList.remove("active");
@@ -492,9 +483,7 @@ function closeForm(){
 
 window.onclick = function(event){
     let modal = document.getElementById("myForm");
-    let loginModal = document.getElementById("loginModal");
     if(event.target == modal){ closeForm(); }
-    if(event.target == loginModal){ closeLoginModal(); }
 }
 
 function handleSubmit(event) {
@@ -507,7 +496,7 @@ function handleSubmit(event) {
         if(!paySender || !payTx) {
             Swal.fire({
                 title: 'Payment Details Required',
-                text: 'برجاء إدخال رقم المشتري والرقم المرجعي للتحويل.',
+                text: 'برجاء إدخال رقم المشتري والرقم المرجعي .',
                 icon: 'warning',
                 customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
             });
@@ -551,62 +540,6 @@ function handleSubmitDirect() {
                 customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
             });
         }
-    });
-}
-
-/* وظائف الأدمن وتسجيل الدخول */
-function checkAdminAccess() {
-    const isAdmin = sessionStorage.getItem("isAdmin");
-    if (isAdmin === "true") {
-        document.getElementById("adminSection").style.display = "block";
-        document.getElementById("loginBtn").innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Logout`;
-        document.getElementById("loginBtn").onclick = handleLogout;
-        listenToLiveRequests();
-    } else {
-        document.getElementById("adminSection").style.display = "none";
-        document.getElementById("loginBtn").innerHTML = `<i class="fa-solid fa-user-shield"></i> Admin Login`;
-        document.getElementById("loginBtn").onclick = openLoginModal;
-    }
-}
-
-function openLoginModal() { document.getElementById("loginModal").style.display = "block"; }
-function closeLoginModal() { document.getElementById("loginModal").style.display = "none"; }
-
-function handleLogin(event) {
-    event.preventDefault();
-    const u = document.getElementById("admin_username").value.trim();
-    const p = document.getElementById("admin_pass").value.trim();
-
-    const isValid = adminUsers.some(user => user.username === u && user.pass === p);
-
-    if (isValid) {
-        sessionStorage.setItem("isAdmin", "true");
-        closeLoginModal();
-        checkAdminAccess();
-        Swal.fire({
-            title: 'Welcome Admin!',
-            text: 'Access granted to database logs.',
-            icon: 'success',
-            customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
-        });
-    } else {
-        Swal.fire({
-            title: 'Access Denied',
-            text: 'Invalid username or password!',
-            icon: 'error',
-            customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
-        });
-    }
-}
-
-function handleLogout() {
-    sessionStorage.removeItem("isAdmin");
-    checkAdminAccess();
-    Swal.fire({
-        title: 'Logged Out',
-        text: 'Admin session closed.',
-        icon: 'info',
-        customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
     });
 }
 
