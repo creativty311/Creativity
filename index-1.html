@@ -284,6 +284,36 @@ td { color: #e5e7eb; }
 .badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; }
 .badge-new { background: rgba(16, 185, 129, 0.15); color: #34d399; }
 .badge-cancel { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+.badge-assigned { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-unassigned { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+.response-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.accept-btn, .reject-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.accept-btn:hover { border-color: rgba(16, 185, 129, 0.5); color: #34d399; }
+.reject-btn:hover { border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
+.accept-btn.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: transparent;
+    color: white;
+}
+.reject-btn.active {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    border-color: transparent;
+    color: white;
+}
 
 .delete-btn {
     background: rgba(239, 68, 68, 0.1);
@@ -365,6 +395,8 @@ td { color: #e5e7eb; }
                     <th>Location</th>
                     <th>Payment Details</th>
                     <th>Details / Reasons</th>
+                    <th>Assigned To</th>
+                    <th>Your Response</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -544,17 +576,25 @@ function handleSubmitDirect() {
 }
 
 function listenToLiveRequests() {
+    const currentAdmin = sessionStorage.getItem("currentAdmin");
     database.ref('installations').on('value', (snapshot) => {
         const tableBody = document.getElementById("logsTableBody");
         tableBody.innerHTML = ""; 
         const data = snapshot.val();
         
         if (!data) {
-            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No requests registered in the cloud database.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-muted);">No requests registered in the cloud database.</td></tr>`;
             return;
         }
 
-        Object.keys(data).forEach(key => {
+        const myKeys = Object.keys(data).filter(key => data[key].assignedAdmin === currentAdmin);
+
+        if (myKeys.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-muted);">No requests assigned to you yet. Wait for the Owner to distribute a request to you.</td></tr>`;
+            return;
+        }
+
+        myKeys.forEach(key => {
             const req = data[key];
             const typeBadge = req.type === 'new' ? '<span class="badge badge-new">NEW</span>' : '<span class="badge badge-cancel">CANCEL</span>';
             const payInfo = req.type === 'new' ? `<small style="color:#facc15;">From: ${req.paySender || '-'}</small><br><small style="color:var(--text-muted);">TxID: ${req.payTx || '-'}</small>` : 'N/A';
@@ -568,6 +608,17 @@ function listenToLiveRequests() {
                     <td>${req.location}</td>
                     <td>${payInfo}</td>
                     <td>${req.details}</td>
+                    <td>${req.assignedAdmin ? `<span class="badge badge-assigned"><i class="fa-solid fa-user-check"></i> ${req.assignedAdmin}</span>` : `<span class="badge badge-unassigned">Unassigned</span>`}</td>
+                    <td>
+                        <div class="response-group">
+                            <button class="accept-btn ${req.adminResponse === 'accepted' ? 'active' : ''}" onclick="respondToTicket('${req.dbId}', 'accepted')">
+                                <i class="fa-solid fa-check"></i> Agree
+                            </button>
+                            <button class="reject-btn ${req.adminResponse === 'rejected' ? 'active' : ''}" onclick="respondToTicket('${req.dbId}', 'rejected')">
+                                <i class="fa-solid fa-xmark"></i> Reject
+                            </button>
+                        </div>
+                    </td>
                     <td>
                         <button class="delete-btn" onclick="deleteLiveTicket('${req.dbId}')">
                             <i class="fa-solid fa-trash"></i> Delete
@@ -576,6 +627,24 @@ function listenToLiveRequests() {
                 </tr>
             `;
             tableBody.innerHTML += row;
+        });
+    });
+}
+
+function respondToTicket(ticketId, decision) {
+    const currentAdmin = sessionStorage.getItem("currentAdmin");
+    database.ref('installations/' + ticketId).update({
+        adminResponse: decision,
+        adminResponseAt: new Date().toISOString(),
+        respondedBy: currentAdmin
+    }).then(() => {
+        Swal.fire({
+            title: decision === 'accepted' ? 'Marked as Agreed' : 'Marked as Rejected',
+            text: `Your decision on ticket ${ticketId} has been sent to the Owner.`,
+            icon: decision === 'accepted' ? 'success' : 'warning',
+            timer: 1400,
+            showConfirmButton: false,
+            customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
         });
     });
 }
