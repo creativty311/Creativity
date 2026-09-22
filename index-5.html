@@ -46,6 +46,44 @@
         }
         .form-control:focus { border-color: #ec4899; background: rgba(255, 255, 255, 0.1); }
         select.form-control option { background-color: #0f172a; color: white; }
+
+        /* Admin response badges & actions */
+        .badge-assigned { background: rgba(236, 73, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 73, 153, 0.35); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .badge-unassigned { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+
+        .response-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .accept-btn, .reject-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.75);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .accept-btn:hover { border-color: rgba(16, 185, 129, 0.5); color: #34d399; }
+        .reject-btn:hover { border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
+        .accept-btn.active { background: linear-gradient(135deg, #10b981, #059669); border-color: transparent; color: white; }
+        .reject-btn.active { background: linear-gradient(135deg, #ef4444, #b91c1c); border-color: transparent; color: white; }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .delete-btn:hover { background: #dc2626; color: white; }
         .submit-btn {
             width: 100%; padding: 16px; margin-top: 10px; border-radius: 50px; border: none;
             background: linear-gradient(135deg, #8a2be2, #ff1493); color: white; font-size: 16px; font-weight: 700; cursor: pointer;
@@ -142,7 +180,7 @@
         <!-- Admin View: Requests List -->
         <div id="adminSection" style="display: none;">
             <div class="join-title">ADMIN PANEL - JOIN REQUESTS</div>
-            <div class="join-subtitle">All submitted user applications from Firebase</div>
+            <div class="join-subtitle">Requests the Owner has assigned to you</div>
 
             <div class="table-responsive">
                 <table>
@@ -155,11 +193,14 @@
                             <th>Governorate</th>
                             <th>Field</th>
                             <th>Message</th>
+                            <th>Assigned To</th>
+                            <th>Your Response</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="requestsTableBody">
                         <tr>
-                            <td colspan="7" style="text-align: center;">Loading requests...</td>
+                            <td colspan="10" style="text-align: center;">Loading requests...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -235,36 +276,103 @@
             });
         }
 
-        // Fetch & render data for Admin
+        // Fetch & render data for Admin (live, filtered to requests assigned to this admin)
         function loadJoinRequests() {
+            const currentAdmin = sessionStorage.getItem("currentAdmin");
             const tableBody = document.getElementById("requestsTableBody");
 
-            database.ref('joinRequests').once('value', (snapshot) => {
+            database.ref('joinRequests').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (!data) {
-                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">No join requests found.</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="10" style="text-align: center;">No join requests found.</td></tr>`;
+                    return;
+                }
+
+                const myKeys = Object.keys(data).filter(key => data[key].assignedAdmin === currentAdmin);
+
+                if (myKeys.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="10" style="text-align: center;">No requests assigned to you yet. Wait for the Owner to distribute a request to you.</td></tr>`;
                     return;
                 }
 
                 let rows = '';
-                Object.keys(data).forEach((key) => {
+                myKeys.forEach((key) => {
                     const req = data[key];
+                    const ticketId = req.dbId || key;
                     rows += `
                         <tr>
-                            <td><span class="badge">${req.dbId || key}</span></td>
+                            <td><span class="badge">${ticketId}</span></td>
                             <td>${req.name || '-'}</td>
                             <td>${req.email || '-'}</td>
                             <td>${req.phone || '-'}</td>
                             <td>${req.governorate || '-'}</td>
                             <td>${req.field || '-'}</td>
                             <td>${req.message || '-'}</td>
+                            <td>${req.assignedAdmin ? `<span class="badge-assigned"><i class="fa-solid fa-user-check"></i> ${req.assignedAdmin}</span>` : `<span class="badge-unassigned">Unassigned</span>`}</td>
+                            <td>
+                                <div class="response-group">
+                                    <button class="accept-btn ${req.adminResponse === 'accepted' ? 'active' : ''}" onclick="respondToJoinRequest('${ticketId}', 'accepted')">
+                                        <i class="fa-solid fa-check"></i> Agree
+                                    </button>
+                                    <button class="reject-btn ${req.adminResponse === 'rejected' ? 'active' : ''}" onclick="respondToJoinRequest('${ticketId}', 'rejected')">
+                                        <i class="fa-solid fa-xmark"></i> Reject
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="delete-btn" onclick="deleteJoinRequest('${ticketId}')">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </td>
                         </tr>
                     `;
                 });
 
                 tableBody.innerHTML = rows;
-            }).catch((error) => {
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
+            }, (error) => {
+                tableBody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
+            });
+        }
+
+        // Admin agrees to / rejects a join request — the decision is sent straight to the Owner's dashboard
+        function respondToJoinRequest(ticketId, decision) {
+            const currentAdmin = sessionStorage.getItem("currentAdmin");
+            database.ref('joinRequests/' + ticketId).update({
+                adminResponse: decision,
+                adminResponseAt: new Date().toISOString(),
+                respondedBy: currentAdmin
+            }).then(() => {
+                Swal.fire({
+                    title: decision === 'accepted' ? 'Marked as Agreed' : 'Marked as Rejected',
+                    text: `Your decision on ticket ${ticketId} has been sent to the Owner.`,
+                    icon: decision === 'accepted' ? 'success' : 'warning',
+                    timer: 1400,
+                    showConfirmButton: false,
+                    confirmButtonColor: '#8a2be2'
+                });
+            });
+        }
+
+        function deleteJoinRequest(ticketId) {
+            Swal.fire({
+                title: 'Delete this request?',
+                text: "This will remove it permanently from the cloud database.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    database.ref('joinRequests/' + ticketId).remove().then(() => {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            icon: 'success',
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                    });
+                }
             });
         }
     </script>
