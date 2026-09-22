@@ -161,33 +161,32 @@
             background: linear-gradient(135deg, #14b8a6, #0d9488);
         }
 
-        /* زر JOIN TO CREATIVITY مع توهج نيون وتدرج بنفسجي ووردي */
+        /* زر JOIN TO CREATIVITY — بسيط وأنيق بدون توهج مبالغ فيه */
         .join-btn {
             position: fixed;
-            bottom: 25px;
+            bottom: 22px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #8a2be2, #ff1493);
+            background: linear-gradient(135deg, #8a2be2, #d6238f);
             color: white;
-            padding: 10px 10px;
-            border-radius: 20px;
-            font-size: 16px;
+            padding: 11px 24px;
+            border-radius: 30px;
+            font-size: 13px;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 0 0 15px #8a2be2, 0 0 30px #ff1493, 0 0 45px rgba(190 , 10, 140, 0.5);
-            transition: all 0.3s ease;
+            letter-spacing: 0.6px;
+            box-shadow: 0 6px 18px rgba(138, 43, 226, 0.35);
+            transition: all 0.25s ease;
             z-index: 1000;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .join-btn:hover {
-            transform: translateX(-50%) scale(1.06);
-            box-shadow: 0 0 20px #8a2be2, 0 0 40px #ff1493, 0 0 60px #ff1493;
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 8px 22px rgba(138, 43, 226, 0.45);
         }
 
         /* تصغير زر LOGIN AS ADMIN */
@@ -229,6 +228,71 @@
             z-index: 10000;
             cursor: pointer;
         }
+
+        /* زر تسجيل دخول الـ Owner — صغير وبسيط بدون شعار، فوق زر Login as Admin مباشرة */
+        .owner-login-btn {
+            position: fixed;
+            bottom: 44px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 4px 2px;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: color 0.25s ease;
+            z-index: 1000;
+        }
+
+        .owner-login-btn:hover {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* شارة حالة الـ Owner */
+        .owner-status-badge {
+            position: fixed;
+            bottom: 44px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: #facc15;
+            padding: 4px 2px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            z-index: 10000;
+            cursor: pointer;
+            transition: color 0.25s ease;
+        }
+
+        .owner-status-badge:hover { color: #fde68a; }
+
+        /* زر الذهاب للوحة تحكم الـ Owner */
+        .owner-dashboard-btn {
+            position: fixed;
+            bottom: 66px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: rgba(250, 204, 21, 0.8);
+            padding: 4px 2px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            display: none;
+            z-index: 10000;
+            cursor: pointer;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.25s ease;
+        }
+
+        .owner-dashboard-btn:hover { color: #fde68a; }
 
         /* --- تنسيقات نافذة SweetAlert لتطابق ألوان وتوهج زر JOIN --- */
         .neon-swal-popup {
@@ -291,6 +355,18 @@
         <i class="fa-solid fa-user-shield"></i> Admin Active (Click to Logout)
     </div>
 
+    <button type="button" class="owner-login-btn" id="ownerLoginBtn" onclick="loginAsOwner()">
+        Owner
+    </button>
+
+    <div class="owner-status-badge" id="ownerStatusBadge" onclick="logoutOwner()">
+        Owner · Logout
+    </div>
+
+    <button type="button" class="owner-dashboard-btn" id="ownerDashboardBtn" onclick="window.location.href='index-6.html'">
+        Dashboard
+    </button>
+
     <div class="welcome">Welcome</div>
 
     <div class="social-links">
@@ -338,14 +414,21 @@
         { username: "admin4", pass: "2532006" }
     ];
 
+    // حساب الـ Owner (صاحب الصفحة) - هو فقط اللي يشوف كل الطلبات ويوزعها على الأدمنز
+    const ownerAccount = { username: "owner", pass: "Owner@2026" };
+
     document.addEventListener("DOMContentLoaded", () => {
         checkAdminStatus();
     });
 
     function checkAdminStatus() {
         const isAdmin = sessionStorage.getItem("isAdmin");
+        const isOwner = sessionStorage.getItem("isOwner");
         const loginBtn = document.getElementById("loginBtn");
         const statusBadge = document.getElementById("statusBadge");
+        const ownerLoginBtn = document.getElementById("ownerLoginBtn");
+        const ownerStatusBadge = document.getElementById("ownerStatusBadge");
+        const ownerDashboardBtn = document.getElementById("ownerDashboardBtn");
 
         if (isAdmin === "true") {
             if(loginBtn) loginBtn.style.display = "none";
@@ -354,6 +437,105 @@
             if(loginBtn) loginBtn.style.display = "block";
             if(statusBadge) statusBadge.style.display = "none";
         }
+
+        if (isOwner === "true") {
+            if(ownerLoginBtn) ownerLoginBtn.style.display = "none";
+            if(ownerStatusBadge) ownerStatusBadge.style.display = "flex";
+            if(ownerDashboardBtn) ownerDashboardBtn.style.display = "flex";
+        } else {
+            if(ownerLoginBtn) ownerLoginBtn.style.display = "flex";
+            if(ownerStatusBadge) ownerStatusBadge.style.display = "none";
+            if(ownerDashboardBtn) ownerDashboardBtn.style.display = "none";
+        }
+    }
+
+    function loginAsOwner() {
+        Swal.fire({
+            title: 'Owner Authorization',
+            html: `
+                <input type="text" id="swal-owner-username" class="swal2-input custom-input" placeholder="Owner Username">
+                <input type="password" id="swal-owner-password" class="swal2-input custom-input" placeholder="Owner Password">
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Access Dashboard',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: 'transparent',
+            customClass: {
+                popup: 'neon-swal-popup',
+                title: 'neon-swal-title',
+                confirmButton: 'neon-swal-confirm',
+                cancelButton: 'neon-swal-cancel'
+            },
+            preConfirm: () => {
+                const username = document.getElementById('swal-owner-username').value.trim();
+                const password = document.getElementById('swal-owner-password').value.trim();
+
+                if (!username || !password) {
+                    Swal.showValidationMessage('Please enter both username and password');
+                    return false;
+                }
+                return { username: username, password: password };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { username, password } = result.value;
+
+                if (username === ownerAccount.username && password === ownerAccount.pass) {
+                    sessionStorage.setItem("isOwner", "true");
+                    sessionStorage.setItem("currentOwner", username);
+
+                    Swal.fire({
+                        title: 'Access Granted!',
+                        text: `Welcome back, Owner!`,
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title' }
+                    }).then(() => {
+                        checkAdminStatus();
+                        window.location.href = 'index-6.html';
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Access Denied',
+                        text: 'Invalid owner username or password.',
+                        icon: 'error',
+                        customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title' }
+                    });
+                }
+            }
+        });
+    }
+
+    function logoutOwner() {
+        Swal.fire({
+            title: 'Logout?',
+            text: "Are you sure you want to end owner session?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Yes, Logout',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'neon-swal-popup',
+                title: 'neon-swal-title',
+                cancelButton: 'neon-swal-cancel'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sessionStorage.removeItem("isOwner");
+                sessionStorage.removeItem("currentOwner");
+                Swal.fire({
+                    title: 'Logged Out',
+                    text: 'Owner session terminated.',
+                    icon: 'info',
+                    customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title' }
+                }).then(() => {
+                    checkAdminStatus();
+                });
+            }
+        });
     }
 
     function loginAsAdmin() {
