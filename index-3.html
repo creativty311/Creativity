@@ -20,6 +20,7 @@
     --accent-purple: #8b5cf6;
     --accent-indigo: #6366f1;
     --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
     --accent-red: #ef4444;
     --text-main: #f3f4f6;
     --text-muted: #9ca3af;
@@ -35,7 +36,6 @@
 body {
     text-align: center;
     background-color: var(--bg-dark);
-    /* خلفية شبكية برمجية بلمسات نيون بنفسجية */
     background-image: 
         radial-gradient(circle at 80% 15%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
         radial-gradient(circle at 15% 85%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
@@ -49,7 +49,6 @@ body {
     position: relative;
 }
 
-/* زر العودة للرئيسية */
 .home-btn {
     position: absolute;
     top: 25px;
@@ -87,7 +86,6 @@ h1 {
     -webkit-text-fill-color: transparent;
 }
 
-/* أزرار التحكم */
 button.action-btn {
     width: 240px;
     height: 54px;
@@ -112,7 +110,6 @@ button.action-btn:hover {
     background: linear-gradient(135deg, #7c3aed, #4f46e5);
 }
 
-/* النافذة المنبثقة Modal */
 .modal {
     display: none;
     position: fixed;
@@ -123,15 +120,16 @@ button.action-btn:hover {
     background: rgba(4, 7, 13, 0.82);
     backdrop-filter: blur(10px);
     z-index: 1000;
+    overflow-y: auto;
 }
 
 .modal-content {
     background: #0f172a;
     width: 90%;
-    max-width: 460px;
+    max-width: 480px;
     padding: 32px;
     border-radius: 20px;
-    margin: 50px auto;
+    margin: 40px auto;
     text-align: left;
     color: var(--text-main);
     position: relative;
@@ -188,25 +186,74 @@ input:focus, select:focus {
     box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
-.save-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-    color: white;
+.payment-box {
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 10px;
+}
+
+.payment-box h3 {
     font-size: 15px;
-    border: none;
-    border-radius: 12px;
-    padding: 14px;
-    margin-top: 25px;
-    cursor: pointer;
+    color: #c084fc;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.payment-box p {
+    font-size: 13px;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.payment-number {
+    display: inline-block;
+    background: #1e293b;
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: #facc15;
     font-weight: 700;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn-step {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.save-btn:hover {
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+.btn-next {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: white;
 }
 
-/* جدول سجلات الإدارة */
+.btn-back {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid var(--border-color);
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.form-step { display: none; }
+.form-step.active { display: block; }
+
 .logs-container {
     display: none;
     max-width: 1100px;
@@ -245,6 +292,37 @@ th {
 
 td { color: #e5e7eb; }
 
+.badge-assigned { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+.badge-unassigned { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+
+.response-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.accept-btn, .reject-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.accept-btn:hover { border-color: rgba(16, 185, 129, 0.5); color: #34d399; }
+.reject-btn:hover { border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
+.accept-btn.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: transparent;
+    color: white;
+}
+.reject-btn.active {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    border-color: transparent;
+    color: white;
+}
+
 .ticket-badge {
     color: #c084fc;
     font-weight: 700;
@@ -272,7 +350,6 @@ td { color: #e5e7eb; }
     color: white;
 }
 
-/* تخصيص SweetAlert2 */
 .custom-swal-popup {
     background: #0f172a !important;
     border: 1px solid var(--border-color) !important;
@@ -304,30 +381,54 @@ td { color: #e5e7eb; }
         <h2 style="margin-top:0; color:#ffffff; font-size: 20px;"><i class="fa-solid fa-ticket"></i> Submit Ticket</h2>
 
         <form id="adminForm" onsubmit="handleSubmit(event)">
-            <label><i class="fa-solid fa-microchip"></i> Device Type</label>
-            <select id="field_device" required>
-                <option value="">-- Select system --</option>
-                <option>Security Cameras</option>
-                <option>LAN/WAN Networks</option>
-                <option>Setting Up VLANs</option>
-                <option>Windows Server</option>
-                <option>Firewall and Security</option>
-                <option>Other</option>
-            </select>
+            <!-- الخطوة 1: التفاصيل الأساسية -->
+            <div id="step1" class="form-step active">
+                <label><i class="fa-solid fa-microchip"></i> Device Type</label>
+                <select id="field_device" required>
+                    <option value="">-- Select system --</option>
+                    <option>Security Cameras</option>
+                    <option>LAN/WAN Networks</option>
+                    <option>Setting Up VLANs</option>
+                    <option>Windows Server</option>
+                    <option>Firewall and Security</option>
+                    <option>Other</option>
+                </select>
 
-            <label><i class="fa-solid fa-user"></i> Customer Name</label>
-            <input type="text" id="field_name" placeholder="Enter customer full name" required>
+                <label><i class="fa-solid fa-user"></i> Customer Name</label>
+                <input type="text" id="field_name" placeholder="Enter customer full name" required>
 
-            <label><i class="fa-solid fa-phone"></i> Phone Number</label>
-            <input type="text" id="field_phone" placeholder="Enter phone number" required>
+                <label><i class="fa-solid fa-phone"></i> Phone Number</label>
+                <input type="text" id="field_phone" placeholder="Enter phone number" required>
 
-            <label><i class="fa-solid fa-location-dot"></i> Location</label>
-            <input type="text" id="field_location" placeholder="Enter location" required>
+                <label><i class="fa-solid fa-location-dot"></i> Location</label>
+                <input type="text" id="field_location" placeholder="Enter location" required>
 
-            <label><i class="fa-solid fa-file-lines"></i> System Details</label>
-            <input type="text" id="field_details" placeholder="Describe the issue" required>
+                <label><i class="fa-solid fa-file-lines"></i> System Details</label>
+                <input type="text" id="field_details" placeholder="Describe the issue" required>
 
-            <button type="submit" class="save-btn">Send Request</button>
+                <div class="form-actions">
+                    <button type="button" class="btn-step btn-next" onclick="goToStep2()">Next <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- الخطوة 2: الدفع وتأكيد الطلب -->
+            <div id="step2" class="form-step">
+                <div class="payment-box">
+                    <h3><i class="fa-solid fa-wallet"></i> Confirmation Fee (50 EGP)</h3>
+                    <p>Please transfer <strong>50 EGP</strong> via Vodafone Cash to: <br><span class="payment-number">01144997914</span></p>
+                    
+                    <label><i class="fa-solid fa-mobile-screen"></i> Sender Phone / Account Number</label>
+                    <input type="text" id="field_pay_sender" placeholder="Phone number you transferred from">
+                    
+                    <label><i class="fa-solid fa-receipt"></i> Transaction Reference ID (الرقم المرجعي)</label>
+                    <input type="text" id="field_pay_tx" placeholder="Enter transaction/reference ID">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-step btn-back" onclick="goToStep1()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    <button type="submit" class="btn-step btn-submit">Confirm & Send Request</button>
+                </div>
+            </div>
         </form>
 
     </div>
@@ -344,7 +445,10 @@ td { color: #e5e7eb; }
                     <th>Customer Name</th>
                     <th>Phone</th>
                     <th>Location</th>
+                    <th>Payment Details</th>
                     <th>Problem Description</th>
+                    <th>Assigned To</th>
+                    <th>Your Response</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -377,11 +481,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function openForm(){
     document.getElementById("myForm").style.display = "block";
+    goToStep1();
+}
+
+function goToStep1() {
+    document.getElementById("step1").classList.add("active");
+    document.getElementById("step2").classList.remove("active");
+}
+
+function goToStep2() {
+    const device = document.getElementById("field_device").value.trim();
+    const name = document.getElementById("field_name").value.trim();
+    const phone = document.getElementById("field_phone").value.trim();
+    const location = document.getElementById("field_location").value.trim();
+    const details = document.getElementById("field_details").value.trim();
+
+    if(!device || !name || !phone || !location || !details) {
+        Swal.fire({
+            title: 'Please fill out all fields!',
+            text: 'جميع البيانات مطلوبة للانتقال لخطوة الدفع.',
+            icon: 'warning',
+            customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
+        });
+        return;
+    }
+
+    document.getElementById("step1").classList.remove("active");
+    document.getElementById("step2").classList.add("active");
 }
 
 function closeForm(){
     document.getElementById("myForm").style.display = "none";
     document.getElementById("adminForm").reset();
+    goToStep1();
 }
 
 window.onclick = function(event){
@@ -391,6 +523,20 @@ window.onclick = function(event){
 
 function handleSubmit(event) {
     event.preventDefault();
+    
+    const paySender = document.getElementById("field_pay_sender").value.trim();
+    const payTx = document.getElementById("field_pay_tx").value.trim();
+
+    if(!paySender || !payTx) {
+        Swal.fire({
+            title: 'Payment Details Required',
+            text: 'برجاء إدخال رقم المحوّل والرقم المرجعي .',
+            icon: 'warning',
+            customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
+        });
+        return;
+    }
+
     const ticketId = "ADM-" + Math.floor(1000 + Math.random() * 9000);
 
     const requestData = {
@@ -399,7 +545,9 @@ function handleSubmit(event) {
         name: document.getElementById("field_name").value,
         phone: document.getElementById("field_phone").value,
         location: document.getElementById("field_location").value,
-        details: document.getElementById("field_details").value
+        details: document.getElementById("field_details").value,
+        paySender: paySender,
+        payTx: payTx
     };
 
     database.ref('administration/' + ticketId).set(requestData)
@@ -418,18 +566,28 @@ function handleSubmit(event) {
 }
 
 function listenToLiveRequests() {
+    const currentAdmin = sessionStorage.getItem("currentAdmin");
     database.ref('administration').on('value', (snapshot) => {
         const tableBody = document.getElementById("logsTableBody");
         tableBody.innerHTML = "";
         const data = snapshot.val();
         
         if (!data) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No admin tasks registered in the cloud database.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-muted);">No admin tasks registered in the cloud database.</td></tr>`;
             return;
         }
 
-        Object.keys(data).forEach(key => {
+        const myKeys = Object.keys(data).filter(key => data[key].assignedAdmin === currentAdmin);
+
+        if (myKeys.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-muted);">No requests assigned to you yet. Wait for the Owner to distribute a request to you.</td></tr>`;
+            return;
+        }
+
+        myKeys.forEach(key => {
             const req = data[key];
+            const payInfo = `<small style="color:#facc15;">From: ${req.paySender || '-'}</small><br><small style="color:var(--text-muted);">TxID: ${req.payTx || '-'}</small>`;
+            
             tableBody.innerHTML += `
                 <tr>
                     <td><span class="ticket-badge">${req.dbId || ''}</span></td>
@@ -437,7 +595,19 @@ function listenToLiveRequests() {
                     <td>${req.name}</td>
                     <td>${req.phone}</td>
                     <td>${req.location}</td>
+                    <td>${payInfo}</td>
                     <td>${req.details}</td>
+                    <td>${req.assignedAdmin ? `<span class="badge-assigned"><i class="fa-solid fa-user-check"></i> ${req.assignedAdmin}</span>` : `<span class="badge-unassigned">Unassigned</span>`}</td>
+                    <td>
+                        <div class="response-group">
+                            <button class="accept-btn ${req.adminResponse === 'accepted' ? 'active' : ''}" onclick="respondToTicket('${req.dbId}', 'accepted')">
+                                <i class="fa-solid fa-check"></i> Agree
+                            </button>
+                            <button class="reject-btn ${req.adminResponse === 'rejected' ? 'active' : ''}" onclick="respondToTicket('${req.dbId}', 'rejected')">
+                                <i class="fa-solid fa-xmark"></i> Reject
+                            </button>
+                        </div>
+                    </td>
                     <td>
                         <button class="delete-btn" onclick="deleteLiveTicket('${req.dbId}')">
                             <i class="fa-solid fa-trash"></i> Delete
@@ -445,6 +615,24 @@ function listenToLiveRequests() {
                     </td>
                 </tr>
             `;
+        });
+    });
+}
+
+function respondToTicket(ticketId, decision) {
+    const currentAdmin = sessionStorage.getItem("currentAdmin");
+    database.ref('administration/' + ticketId).update({
+        adminResponse: decision,
+        adminResponseAt: new Date().toISOString(),
+        respondedBy: currentAdmin
+    }).then(() => {
+        Swal.fire({
+            title: decision === 'accepted' ? 'Marked as Agreed' : 'Marked as Rejected',
+            text: `Your decision on ticket ${ticketId} has been sent to the Owner.`,
+            icon: decision === 'accepted' ? 'success' : 'warning',
+            timer: 1400,
+            showConfirmButton: false,
+            customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
         });
     });
 }
