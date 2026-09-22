@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Control Center</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+<style>
+:root {
+    --bg-dark: #0a0704;
+    --card-bg: rgba(20, 15, 8, 0.75);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --accent-gold: #f59e0b;
+    --accent-gold-dark: #b45309;
+    --accent-red: #ef4444;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    text-align: center;
+    background-color: var(--bg-dark);
+    background-image:
+        radial-gradient(circle at 80% 15%, rgba(245, 158, 11, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(180, 83, 9, 0.15) 0%, transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 35px 35px, 35px 35px;
+    background-attachment: fixed;
+    color: var(--text-main);
+    padding: 40px 20px 80px;
+    min-height: 100vh;
+    position: relative;
+}
+
+.top-bar {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    right: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.home-btn, .logout-btn {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.home-btn:hover, .logout-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.logout-btn {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.logout-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-top: 60px;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 30%, #fcd34d 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 35px;
+}
+
+/* تبويبات الأقسام */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.tab-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+}
+
+.tab-count {
+    background: rgba(0, 0, 0, 0.25);
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+/* حاوية الجداول */
+.logs-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    color: white;
+    padding: 28px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    text-align: left;
+}
+
+.logs-container h2 {
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.table-panel { display: none; }
+.table-panel.active { display: block; }
+
+.table-wrapper { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+
+th, td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); text-align: left; font-size: 13.5px; vertical-align: middle; }
+
+th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-gold);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+td { color: #e5e7eb; }
+
+.ticket-badge {
+    color: var(--accent-gold);
+    font-weight: 700;
+    background: rgba(245, 158, 11, 0.15);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.assign-select {
+    width: auto;
+    min-width: 150px;
+    padding: 8px 10px;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    outline: none;
+    font-size: 13px;
+    color: white;
+    cursor: pointer;
+}
+
+.assign-select:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+.assign-select option { background: #1e293b; color: white; }
+
+.delete-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.badge-pending { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.badge-accepted { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.badge-rejected { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+
+.empty-row td {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 30px;
+}
+
+.owner-guard {
+    max-width: 500px;
+    margin: 120px auto;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px;
+}
+
+.owner-guard i {
+    font-size: 40px;
+    color: var(--accent-gold);
+    margin-bottom: 15px;
+}
+
+.custom-swal-popup {
+    background: #0f172a !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    color: white !important;
+}
+
+.custom-swal-title { color: #ffffff !important; }
+
+@media (max-width: 640px) {
+    .top-bar { position: static; justify-content: center; margin-bottom: 20px; }
+    h1 { margin-top: 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+    <a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+    <button type="button" class="logout-btn" onclick="ownerLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+</div>
+
+<h1><i class=""></i> Owner Control Center</h1>
+<div class="subtitle">All requests from every section in one place — assign each one to an admin</div>
+
+<div id="ownerContent" style="display:none;">
+
+    <div class="tabs">
+        <button class="tab-btn active" data-panel="panel-install" onclick="switchTab('panel-install', this)">
+            <i class="fa-solid fa-screwdriver-wrench"></i> Installation <span class="tab-count" id="count-install">0</span>
+        </button>
+        <button class="tab-btn" data-panel="panel-maintenance" onclick="switchTab('panel-maintenance', this)">
+            <i class="fa-solid fa-wrench"></i> Maintenance <span class="tab-count" id="count-maintenance">0</span>
+        </button>
+        <button class="tab-btn" data-panel="panel-admin" onclick="switchTab('panel-admin', this)">
+            <i class="fa-solid fa-user-gear"></i> Administration <span class="tab-count" id="count-admin">0</span>
+        </button>
+        <button class="tab-btn" data-panel="panel-join" onclick="switchTab('panel-join', this)">
+            <i class="fa-solid fa-user-plus"></i> Join Requests <span class="tab-count" id="count-join">0</span>
+        </button>
+    </div>
+
+    <div class="logs-container">
+
+        <div id="panel-install" class="table-panel active">
+            <h2><i class="fa-solid fa-screwdriver-wrench"></i> Installation Requests</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th><th>Device</th><th>Customer</th><th>Phone</th><th>Location</th><th>Payment Details</th><th>Details</th><th>Assign To</th><th>Admin Response</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-install"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="panel-maintenance" class="table-panel">
+            <h2><i class="fa-solid fa-wrench"></i> Maintenance Requests</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th><th>Device</th><th>Customer</th><th>Phone</th><th>Location</th><th>Payment Details</th><th>Details</th><th>Assign To</th><th>Admin Response</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-maintenance"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="panel-admin" class="table-panel">
+            <h2><i class="fa-solid fa-user-gear"></i> Administration Requests</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th><th>Device</th><th>Customer</th><th>Phone</th><th>Location</th><th>Payment Details</th><th>Details</th><th>Assign To</th><th>Admin Response</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-admin"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="panel-join" class="table-panel">
+            <h2><i class="fa-solid fa-user-plus"></i> Join Requests</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th><th>Name</th><th>Email</th><th>Phone</th><th>Governorate</th><th>Field</th><th>Assign To</th><th>Admin Response</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-join"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="guardBlock" class="owner-guard" style="display:none;">
+    <i class="fa-solid fa-lock"></i>
+    <h2>Owner access only</h2>
+    <p style="color: var(--text-muted); margin-top: 10px;">Redirecting you to the homepage...</p>
+</div>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyBV93xGbKln5RcaPP9VOTlmh5auKD04Zms",
+    authDomain: "creatitity-d09f7.firebaseapp.com",
+    databaseURL: "https://creatitity-d09f7-default-rtdb.firebaseio.com",
+    projectId: "creatitity-d09f7",
+    storageBucket: "creatitity-d09f7.appspot.com",
+    messagingSenderId: "591631410491",
+    appId: "1:591631410491:web:ff000c0a8d2f030f57031e"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// أسماء الأدمنز العاديين المتاحين للتوزيع عليهم
+const adminNames = ["admin1", "admin2", "admin3", "admin4"];
+
+// خريطة الأقسام: اسم القسم في Firebase => id عناصر الجدول
+const sections = {
+    install:     { ref: "installations",  body: "body-install",     count: "count-install" },
+    maintenance: { ref: "maintenance",    body: "body-maintenance", count: "count-maintenance" },
+    admin:       { ref: "administration", body: "body-admin",       count: "count-admin" },
+    join:        { ref: "joinRequests",   body: "body-join",        count: "count-join" }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    const isOwner = sessionStorage.getItem("isOwner");
+    if (isOwner !== "true") {
+        document.getElementById("guardBlock").style.display = "block";
+        setTimeout(() => { window.location.href = "index.html"; }, 1800);
+        return;
+    }
+    document.getElementById("ownerContent").style.display = "block";
+    Object.keys(sections).forEach(key => listenToSection(key));
+});
+
+function switchTab(panelId, btn) {
+    document.querySelectorAll(".table-panel").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.getElementById(panelId).classList.add("active");
+    btn.classList.add("active");
+}
+
+function buildResponseBadge(req) {
+    if (req.adminResponse === "accepted") {
+        return `<span class="badge-accepted"><i class="fa-solid fa-check"></i> Agreed${req.respondedBy ? ` by ${req.respondedBy}` : ""}</span>`;
+    }
+    if (req.adminResponse === "rejected") {
+        return `<span class="badge-rejected"><i class="fa-solid fa-xmark"></i> Rejected${req.respondedBy ? ` by ${req.respondedBy}` : ""}</span>`;
+    }
+    return `<span class="badge-pending"><i class="fa-solid fa-hourglass-half"></i> Pending</span>`;
+}
+
+function buildAssignSelect(refName, ticketId, currentValue) {
+    let options = `<option value="">Unassigned</option>`;
+    adminNames.forEach(name => {
+        options += `<option value="${name}" ${currentValue === name ? "selected" : ""}>${name}</option>`;
+    });
+    return `<select class="assign-select" onchange="assignTicket('${refName}', '${ticketId}', this.value)">${options}</select>`;
+}
+
+function assignTicket(refName, ticketId, adminName) {
+    const updateData = adminName
+        ? { assignedAdmin: adminName, assignedAt: new Date().toISOString(), assignedBy: sessionStorage.getItem("currentOwner") || "owner" }
+        : { assignedAdmin: null, assignedAt: null, assignedBy: null };
+
+    database.ref(refName + "/" + ticketId).update(updateData)
+        .then(() => {
+            Swal.fire({
+                title: adminName ? "Assigned!" : "Unassigned",
+                text: adminName ? `Ticket ${ticketId} was assigned to ${adminName}.` : `Ticket ${ticketId} is now unassigned.`,
+                icon: "success",
+                timer: 1300,
+                showConfirmButton: false,
+                customClass: { popup: "custom-swal-popup", title: "custom-swal-title" }
+            });
+        })
+        .catch((error) => {
+            Swal.fire("Error", error.message, "error");
+        });
+}
+
+function deleteTicket(refName, ticketId) {
+    Swal.fire({
+        title: "Delete this request?",
+        text: "This will remove it permanently from the cloud database.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ef4444",
+        confirmButtonText: "Yes, Delete",
+        cancelButtonText: "Cancel",
+        customClass: { popup: "custom-swal-popup", title: "custom-swal-title" }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            database.ref(refName + "/" + ticketId).remove().then(() => {
+                Swal.fire({
+                    title: "Deleted!",
+                    icon: "success",
+                    timer: 1200,
+                    showConfirmButton: false,
+                    customClass: { popup: "custom-swal-popup", title: "custom-swal-title" }
+                });
+            });
+        }
+    });
+}
+
+function listenToSection(key) {
+    const section = sections[key];
+    database.ref(section.ref).on("value", (snapshot) => {
+        const tableBody = document.getElementById(section.body);
+        const countEl = document.getElementById(section.count);
+        tableBody.innerHTML = "";
+        const data = snapshot.val();
+
+        if (!data) {
+            countEl.textContent = "0";
+            const colspan = key === "join" ? 9 : 10;
+            tableBody.innerHTML = `<tr class="empty-row"><td colspan="${colspan}">No requests in this section yet.</td></tr>`;
+            return;
+        }
+
+        const keys = Object.keys(data);
+        countEl.textContent = keys.length;
+
+        keys.forEach(recordKey => {
+            const req = data[recordKey];
+            const ticketId = req.dbId || recordKey;
+            const assignSelect = buildAssignSelect(section.ref, ticketId, req.assignedAdmin);
+            const deleteBtn = `<button class="delete-btn" onclick="deleteTicket('${section.ref}', '${ticketId}')"><i class="fa-solid fa-trash"></i> Delete</button>`;
+            const paymentInfo = (req.paySender || req.payTx)
+                ? `<small style="color:var(--accent-gold);">From: ${req.paySender || "-"}</small><br><small style="color:var(--text-muted);">TxID: ${req.payTx || "-"}</small>`
+                : `<span style="color:var(--text-muted);">-</span>`;
+
+            let row;
+            if (key === "join") {
+                row = `
+                    <tr>
+                        <td><span class="ticket-badge">${ticketId}</span></td>
+                        <td>${req.name || "-"}</td>
+                        <td>${req.email || "-"}</td>
+                        <td>${req.phone || "-"}</td>
+                        <td>${req.governorate || "-"}</td>
+                        <td>${req.field || "-"}</td>
+                        <td>${assignSelect}</td>
+                        <td>${buildResponseBadge(req)}</td>
+                        <td>${deleteBtn}</td>
+                    </tr>
+                `;
+            } else {
+                row = `
+                    <tr>
+                        <td><span class="ticket-badge">${ticketId}</span></td>
+                        <td><strong>${req.device || "-"}</strong></td>
+                        <td>${req.name || "-"}</td>
+                        <td>${req.phone || "-"}</td>
+                        <td>${req.location || "-"}</td>
+                        <td>${paymentInfo}</td>
+                        <td>${req.details || "-"}</td>
+                        <td>${assignSelect}</td>
+                        <td>${buildResponseBadge(req)}</td>
+                        <td>${deleteBtn}</td>
+                    </tr>
+                `;
+            }
+            tableBody.innerHTML += row;
+        });
+    });
+}
+
+function ownerLogout() {
+    Swal.fire({
+        title: "Logout?",
+        text: "Are you sure you want to end owner session?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#ef4444",
+        confirmButtonText: "Yes, Logout",
+        cancelButtonText: "Cancel",
+        customClass: { popup: "custom-swal-popup", title: "custom-swal-title" }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            sessionStorage.removeItem("isOwner");
+            sessionStorage.removeItem("currentOwner");
+            window.location.href = "index.html";
+        }
+    });
+}
+</script>
+</body>
+</html>
