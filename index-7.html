@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products - Creativity Center</title>
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3598/3598209.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--t-bg:#0b1730;--t-surface:#12244a;--t-line:rgba(255,255,255,.1);--t-text:#f3f6fc;--t-muted:#9db2d6;--t-accent:#2563eb;--t-accent-hover:#1d4ed8;--t-ok:#10b981;--pad:clamp(16px,4vw,48px)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:linear-gradient(rgba(11,23,48,.88),rgba(11,23,48,.95)),url('bg.jpg') center/cover no-repeat fixed,#0b1730;color:var(--t-text);min-height:100svh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+
+.top{width:100%;padding:18px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800}
+.nav{display:none;gap:28px}
+.nav a{font-size:15px;font-weight:600;color:#cfdcf2;padding:10px 4px}
+.nav a:hover{color:#fff}
+.nav a.current{color:#60a5fa;font-weight:700}
+.tools{display:flex;gap:10px}
+.icon-btn{width:44px;height:44px;border-radius:12px;border:1px solid var(--t-line);background:var(--t-surface);display:flex;align-items:center;justify-content:center;color:#cfdcf2;font-size:17px}
+.icon-btn:hover{border-color:#60a5fa}
+
+main{width:100%;max-width:1120px;margin:0 auto;padding:24px var(--pad) 56px;flex:1}
+.head h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:800;letter-spacing:-1px;line-height:1.1}
+.head p{margin-top:10px;max-width:34em;font-size:clamp(.95rem,2.2vw,1.1rem);line-height:1.6;color:var(--t-muted)}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 22px}
+.chip-btn{height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-muted);font-size:14px;font-weight:600}
+.chip-btn:hover{border-color:#60a5fa;color:var(--t-text)}
+.chip-btn.active{background:var(--t-accent);border-color:transparent;color:#fff}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.product{background:var(--t-surface);border:1px solid var(--t-line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.product[hidden]{display:none}
+.media{position:relative;aspect-ratio:4/3;background:#0e1d3d;overflow:hidden}
+.media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+.product:hover .media img{transform:scale(1.04)}
+.media .ph{display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:42px;color:#2f4a80}
+.media.noimg .ph{display:flex}
+.tag{position:absolute;top:12px;left:12px;padding:5px 11px;border-radius:999px;background:rgba(11,23,48,.82);border:1px solid var(--t-line);font-size:12px;font-weight:600;color:#cfdcf2}
+.body{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.body h2{font-size:18px;font-weight:700}
+.body p{font-size:14px;line-height:1.55;color:var(--t-muted);flex:1}
+.feats{list-style:none;display:grid;gap:6px;margin-top:4px}
+.feats li{font-size:13px;color:#cfdcf2;display:flex;align-items:center;gap:8px}
+.feats i{color:var(--t-ok);font-size:12px}
+.ask{margin-top:12px;height:46px;border-radius:12px;background:var(--t-accent);display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:700}
+.ask:hover{background:var(--t-accent-hover)}
+
+.cta{margin-top:40px;background:var(--t-surface);border:1px solid var(--t-line);border-radius:18px;padding:22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.cta h3{font-size:18px;font-weight:700}
+.cta p{margin-top:4px;font-size:14px;color:var(--t-muted)}
+.cta a{height:46px;padding:0 22px;border-radius:12px;border:1px solid var(--t-line);display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
+.cta a:hover{border-color:#60a5fa}
+
+footer{border-top:1px solid var(--t-line);background:var(--t-surface);color:var(--t-muted);text-align:center;padding:20px;font-size:14px}
+
+@media (min-width:900px){.top{display:grid;grid-template-columns:1fr auto 1fr}.tools{justify-self:end}.nav{display:flex}}
+@media (max-width:420px){.brand{gap:8px}.brand span{font-size:15px}.brand svg{width:28px;height:28px}.tools{gap:6px}.icon-btn{width:40px;height:40px}.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+    <a href="index.html" class="brand" aria-label="Creativity Center home">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 4 L30 28 H4 Z" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/></svg>
+        <span>Creativity Center</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+        <a href="index-1.html">Installation</a>
+        <a href="index-2.html">Maintenance</a>
+        <a href="index-3.html">Administration</a>
+        <a href="products.html" class="current" aria-current="page">Products</a>
+        <a href="index-4.html">About Us</a>
+    </nav>
+    <div class="tools">
+        <a class="icon-btn" href="index.html" aria-label="Back to home"><i class="fa-solid fa-house"></i></a>
+        <a class="icon-btn" href="https://www.facebook.com/share/1FAhHjcskP/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a class="icon-btn" href="https://wa.me/201552250338" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+    </div>
+</header>
+
+<main>
+    <section class="head">
+        <h1>Products</h1>
+        <p>Cameras, networking gear, servers and security appliances we supply and install. Message us for availability and pricing.</p>
+    </section>
+
+    <div class="filters" role="group" aria-label="Filter products">
+        <button type="button" class="chip-btn active" data-filter="all">All</button>
+        <button type="button" class="chip-btn" data-filter="cameras">Cameras</button>
+        <button type="button" class="chip-btn" data-filter="networking">Networking</button>
+        <button type="button" class="chip-btn" data-filter="servers">Servers</button>
+        <button type="button" class="chip-btn" data-filter="security">Security</button>
+    </div>
+
+    <section class="grid" id="grid">
+        <article class="product" data-cat="cameras">
+            <div class="media"><img data-img="in.png" alt="Camera 5MP"><i class="fa-solid fa-video ph"></i><span class="tag">Cameras</span></div>
+            <div class="body">
+                <h2>Camera 5MP</h2>
+                <p>Indoor and outdoor surveillance systems for homes, shops and offices.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>HD Vido</li><li><i class="fa-solid fa-check"></i>camera in site</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20Security%20Cameras" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+
+         <article class="product" data-cat="cameras">
+            <div class="media"><img data-img="o 5.webp" alt="Camera 5MP"><i class="fa-solid fa-video ph"></i><span class="tag">Cameras</span></div>
+            <div class="body">
+                <h2>Camera 5MP</h2>
+                <p>Indoor and outdoor surveillance systems for homes, shops and offices.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>HD Vido</li><li><i class="fa-solid fa-check"></i>camera out site</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20Security%20Cameras" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+        
+         <article class="product" data-cat="cameras">
+            <div class="media"><img data-img="o 8.webp" alt="Camera 8MP"><i class="fa-solid fa-video ph"></i><span class="tag">Cameras</span></div>
+            <div class="body">
+                <h2>Camera 8MP</h2>
+                <p>Indoor and outdoor surveillance systems for homes, shops and offices.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>HD Vido</li><li><i class="fa-solid fa-check"></i>camera out site</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20Security%20Cameras" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+
+
+        <article class="product" data-cat="cameras">
+            <div class="media"><img data-img="d a c.webp" alt="system camera "><i class="fa-solid fa-video ph"></i><span class="tag">Cameras</span></div>
+            <div class="body">
+                <h2>Camera system DVR</h2>
+                <p>Surveillance camera for clear day and night monitoring.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>HD video quality</li><li><i class="fa-solid fa-check"></i>Installation available</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20NVR" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+        <article class="product" data-cat="cameras">
+            <div class="media"><img data-img="adbtor.png" alt="12V adapter"><i class="fa-solid fa-video ph"></i><span class="tag">Cameras</span></div>
+            <div class="body">
+                <h2>12V adapter</h2>
+                <p>Indoor and outdoor surveillance systems for homes, shops and offices.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>12V/1A adapter</li><li><i class="fa-solid fa-check"></i>Color: Black</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20Security%20Cameras" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+
+        <article class="product" data-cat="cameras">
+            <div class="media"><img data-img="cocsal.png" alt="Cocsal"><i class="fa-solid fa-video ph"></i><span class="tag">Cameras</span></div>
+            <div class="body">
+                <h2>Cocsal</h2>
+                <p>Surveillance camera for clear day and night monitoring.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>HD video quality</li><li><i class="fa-solid fa-check"></i>Installation available</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20Cocsal" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+
+
+        
+
+        <article class="product" data-cat="cameras">
+            <div class="media"><img data-img="dvr.webp" alt="DVR"><i class="fa-solid fa-video ph"></i><span class="tag">Cameras</span></div>
+            <div class="body">
+                <h2>DVR</h2>
+                <p>Surveillance camera for clear day and night monitoring.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>HD video quality</li><li><i class="fa-solid fa-check"></i>Installation available</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20DVR" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+
+        <article class="product" data-cat="networking">
+            <div class="media"><img data-img="" alt="Switches and routers"><i class="fa-solid fa-network-wired ph"></i><span class="tag">Networking</span></div>
+            <div class="body">
+                <h2>Switches &amp; Routers</h2>
+                <p>Reliable LAN and WAN equipment, configured and tested before delivery.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>VLAN ready</li><li><i class="fa-solid fa-check"></i>Managed and unmanaged options</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20Switches%20and%20Routers" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+
+        <article class="product" data-cat="servers">
+            <div class="media"><img data-img="" alt="Servers and storage"><i class="fa-solid fa-server ph"></i><span class="tag">Servers</span></div>
+            <div class="body">
+                <h2>Servers &amp; Storage</h2>
+                <p>Windows Server setups and storage for businesses that need uptime.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>Installation and setup</li><li><i class="fa-solid fa-check"></i>Backup planning</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20Servers%20and%20Storage" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+
+        <article class="product" data-cat="security">
+            <div class="media"><img data-img="" alt="Firewall appliances"><i class="fa-solid fa-shield-halved ph"></i><span class="tag">Security</span></div>
+            <div class="body">
+                <h2>Firewall Appliances</h2>
+                <p>Protect your network from threats with properly configured firewalls.</p>
+                <ul class="feats"><li><i class="fa-solid fa-check"></i>Traffic filtering</li><li><i class="fa-solid fa-check"></i>Secure remote access</li></ul>
+                <a class="ask" href="https://wa.me/201552250338?text=Hello%2C%20I%27m%20interested%20in%3A%20Firewall%20Appliances" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Ask about this</a>
+            </div>
+        </article>
+    </section>
+
+    <section class="cta">
+        <div>
+            <h3>Need help choosing?</h3>
+            <p>Tell us what you need and we will recommend the right setup.</p>
+        </div>
+        <a href="index-1.html"><i class="fa-solid fa-screwdriver-wrench"></i>Request installation</a>
+    </section>
+</main>
+
+<footer>© 2026 All Rights Reserved</footer>
+
+<script>
+// Product images: a, b, c, d. Tries common file types until one loads.
+document.querySelectorAll('img[data-img]').forEach(function(img){
+    var n=img.dataset.img, N=n.toUpperCase();
+    var list=(n.indexOf('.')>-1?[n]:[]).concat([n+'.webp',n+'.jpg',n+'.jpeg',n+'.png',N+'.webp',N+'.jpg',N+'.png']), i=0;
+    img.onerror=function(){
+        i++;
+        if(i<list.length){ img.src=list[i]; }
+        else { img.removeAttribute('src'); img.parentElement.classList.add('noimg'); }
+    };
+    img.src=list[0];
+});
+
+// Category filter
+var chips=document.querySelectorAll('.chip-btn'), items=document.querySelectorAll('.product');
+chips.forEach(function(c){
+    c.addEventListener('click',function(){
+        chips.forEach(function(x){x.classList.toggle('active',x===c);});
+        var f=c.dataset.filter;
+        items.forEach(function(p){p.hidden=!(f==='all'||p.dataset.cat===f);});
+    });
+});
+</script>
+</body>
+</html>
