@@ -9,403 +9,157 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3598/3598209.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+:root{--t-bg:#0b1730;--t-surface:#12244a;--t-line:rgba(255,255,255,.1);--t-text:#f3f6fc;--t-muted:#9db2d6;--t-accent:#2563eb;--t-accent-hover:#1d4ed8;--t-danger:#ef4444;--t-ok:#10b981}
+body,button,input,select,textarea{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:linear-gradient(rgba(11,23,48,.86),rgba(11,23,48,.93)),url('bg.jpg') center/cover no-repeat fixed,#0b1730!important;color:var(--t-text);min-height:100svh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
 
-        body {
-            background: linear-gradient(to bottom, rgba(5, 20, 60, 0.35), rgba(5, 20, 60, 0.5)), 
-                        url('bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+:root{--pad:clamp(16px,4vw,48px)}
+.top{position:relative;width:100%;padding:18px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800}
+.nav{display:none;gap:28px;justify-self:center}
+.nav a{font-size:15px;font-weight:600;color:#cfdcf2;padding:10px 4px}
+.nav a:hover{color:#fff}
+.tools{display:flex;gap:10px;justify-self:end}
+.icon-btn{width:44px;height:44px;border-radius:12px;border:1px solid var(--t-line);background:var(--t-surface);display:flex;align-items:center;justify-content:center;color:#cfdcf2;font-size:17px;position:relative}
+.icon-btn:hover{border-color:#60a5fa}
+#staffToggle{background:transparent;border-color:rgba(185,205,234,.35)}
+#staffToggle.on::after{content:"";position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:50%;background:var(--t-ok);border:2px solid var(--t-bg)}
 
-        /* عنوان Welcome في أعلى اليسار */
-        .welcome {
-            position: absolute;
-            top: 25px;
-            left: 30px;
-            font-size: 26px;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-            letter-spacing: 1px;
-        }
+.staff-menu{display:none;position:absolute;top:76px;right:var(--pad);z-index:50;width:min(320px,calc(100% - 2*var(--pad)));background:#0e1d3d;border:1px solid var(--t-line);border-radius:18px;padding:12px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.staff-menu.open{display:block}
+.sm-title{font-size:15px;font-weight:700;padding:8px 8px 2px}
+.sm-sub{font-size:13px;color:var(--t-muted);padding:0 8px 10px}
+.sm-row{width:100%;display:block;text-align:left;border:1px solid var(--t-line);background:var(--t-surface);border-radius:14px;padding:14px 16px;margin-top:8px;font-size:15px;font-weight:600}
+.sm-row i{display:inline-block;width:22px;margin-right:12px;text-align:center}
+.sm-row:hover{border-color:#60a5fa}
+#statusBadge,#ownerStatusBadge,#ownerDashboardBtn{display:none}
 
-        /* الأيقونات الاجتماعية في أعلى اليمين */
-        .social-links {
-            position: absolute;
-            top: 25px;
-            right: 30px;
-            display: flex;
-            gap: 12px;
-        }
+.hero{width:100%;max-width:1120px;margin:0 auto;padding:16px var(--pad) 40px;display:grid;gap:20px;grid-template-columns:1fr;align-items:center;align-content:center;flex:1}
+.hello{font-size:14px;font-weight:500;color:var(--t-muted)}
+.hero h1{margin-top:4px;font-size:clamp(2rem,6vw,3.5rem);font-weight:800;letter-spacing:-1px;line-height:1.1}
+.lead{margin-top:12px;font-size:clamp(.95rem,2.2vw,1.1rem);line-height:1.6;color:var(--t-muted);max-width:30em}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+.card{text-align:left;border:1px solid var(--t-line);border-radius:18px;padding:18px;min-height:190px;background:var(--t-surface);display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s}
+.card:hover{border-color:#60a5fa}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;color:var(--t-muted)}
+.chip{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:21px}
+.card h2{font-size:17px;font-weight:700}
+.card p{margin-top:6px;font-size:13px;line-height:1.45;color:var(--t-muted)}
+.c-green{background:rgba(52,211,153,.14);color:#34d399}
+.c-amber{background:rgba(251,191,36,.14);color:#fbbf24}
+.c-blue{background:rgba(96,165,250,.14);color:#60a5fa}
+.c-teal{background:rgba(45,212,191,.14);color:#2dd4bf}
+.c-violet{background:rgba(167,139,250,.14);color:#a78bfa}
+.card-wide{grid-column:1/-1;min-height:0;flex-direction:row;align-items:center;gap:16px;padding:16px 18px}
+.card-wide .grow{flex:1}
+.join-btn{height:54px;padding:0 28px;border:0;border-radius:16px;background:var(--t-accent);color:#fff;font-size:15px;font-weight:700;letter-spacing:.6px;display:flex;align-items:center;justify-content:center;gap:10px}
+.join-btn:hover{background:var(--t-accent-hover)}
 
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .social-links a:hover {
-            transform: translateY(-3px) scale(1.05);
-        }
-
-        .social-links a:nth-child(1) { background-color: #1877f2; }
-        .social-links a:nth-child(2) { background-color: #25d366; }
-
-        /* الحاوية المخصصة للعنوان والوصف */
-        .header-content {
-            margin-bottom: 45px;
-            transform: translateY(-20px);
-        }
-
-        .site-title {
-            font-size: 36px;
-            font-weight: 800;
-            margin-bottom: 70px;
-            margin-top: 5px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
-            letter-spacing: 0.5px;
-        }
-
-        /* شبكة الأزرار الوسطى */
-        .button-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
-            width: 90%;
-            max-width: 650px;
-            margin-bottom: 300px;
-        }
-
-        /* تصميم الأزرار الاحترافية */
-        .btn {
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 18px 24px;
-            border-radius: 16px;
-            color: white;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            overflow: hidden;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            backdrop-filter: blur(5px);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: all 0.6s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.45);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .btn:active {
-            transform: translateY(-1px);
-        }
-
-        .install {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .maintenance {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .admin {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-
-        .about {
-            background: linear-gradient(135deg, #14b8a6, #0d9488);
-        }
-
-        /* زر JOIN TO CREATIVITY — بسيط وأنيق بدون توهج مبالغ فيه */
-        .join-btn {
-            position: fixed;
-            bottom: 22px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #8a2be2, #d6238f);
-            color: white;
-            padding: 11px 24px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            letter-spacing: 0.6px;
-            box-shadow: 0 6px 18px rgba(138, 43, 226, 0.35);
-            transition: all 0.25s ease;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .join-btn:hover {
-            transform: translateX(-50%) translateY(-2px);
-            box-shadow: 0 8px 22px rgba(138, 43, 226, 0.45);
-        }
-
-        /* تصغير زر LOGIN AS ADMIN */
-        .admin-login-btn {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 6px 6px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .admin-login-btn:hover {
-            background: rgba(0, 0, 0, 0.65);
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* شارة حالة المسؤول أسفل اليسار */
-        .admin-status-badge {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: #10b981;
-            color: white;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            display: none;
-            z-index: 10000;
-            cursor: pointer;
-        }
-
-        /* زر تسجيل دخول الـ Owner — صغير وبسيط بدون شعار، فوق زر Login as Admin مباشرة */
-        .owner-login-btn {
-            position: fixed;
-            bottom: 44px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            padding: 4px 2px;
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            cursor: pointer;
-            transition: color 0.25s ease;
-            z-index: 1000;
-        }
-
-        .owner-login-btn:hover {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        /* شارة حالة الـ Owner */
-        .owner-status-badge {
-            position: fixed;
-            bottom: 44px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            color: #facc15;
-            padding: 4px 2px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            display: none;
-            align-items: center;
-            gap: 6px;
-            z-index: 10000;
-            cursor: pointer;
-            transition: color 0.25s ease;
-        }
-
-        .owner-status-badge:hover { color: #fde68a; }
-
-        /* زر الذهاب للوحة تحكم الـ Owner */
-        .owner-dashboard-btn {
-            position: fixed;
-            bottom: 66px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            color: rgba(250, 204, 21, 0.8);
-            padding: 4px 2px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            display: none;
-            z-index: 10000;
-            cursor: pointer;
-            align-items: center;
-            gap: 6px;
-            transition: color 0.25s ease;
-        }
-
-        .owner-dashboard-btn:hover { color: #fde68a; }
-
-        /* --- تنسيقات نافذة SweetAlert لتطابق ألوان وتوهج زر JOIN --- */
-        .neon-swal-popup {
-            background: rgba(15, 12, 41, 0.92) !important;
-            border: 2px solid #ff1493 !important;
-            border-radius: 20px !important;
-            box-shadow: 0 0 20px #8a2be2, 0 0 40px #ff1493 !important;
-            backdrop-filter: blur(10px);
-        }
-
-        .neon-swal-title {
-            color: #ffffff !important;
-            text-shadow: 0 0 10px #ff1493, 0 0 20px #8a2be2;
-            font-weight: 700 !important;
-        }
-
-        .custom-input {
-            width: 80% !important;
-            font-size: 14px !important;
-            background: rgba(255, 255, 255, 0.08) !important;
-            border: 1px solid rgba(255, 20, 147, 0.5) !important;
-            color: #ffffff !important;
-            border-radius: 10px !important;
-            margin: 10px auto !important;
-        }
-
-        .custom-input:focus {
-            border-color: #ff1493 !important;
-            box-shadow: 0 0 10px #ff1493 !important;
-        }
-
-        .custom-input::placeholder {
-            color: rgba(255, 255, 255, 0.6) !important;
-        }
-
-        .neon-swal-confirm {
-            background: linear-gradient(135deg, #8a2be2, #ff1493) !important;
-            color: #ffffff !important;
-            border-radius: 25px !important;
-            border: none !important;
-            font-weight: 600 !important;
-            box-shadow: 0 0 10px #8a2be2, 0 0 20px #ff1493 !important;
-        }
-
-        .neon-swal-cancel {
-            background: rgba(255, 255, 255, 0.15) !important;
-            color: #ffffff !important;
-            border-radius: 25px !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        }
-    </style>
+@media (min-width:900px){
+  .top{display:grid;grid-template-columns:1fr auto 1fr}
+  .brand{justify-self:start}
+  .nav{display:flex}
+  .hero{grid-template-columns:minmax(0,1fr) minmax(380px,540px);grid-template-areas:"text cards" "join cards";column-gap:clamp(32px,4vw,56px);row-gap:24px;padding-top:24px}
+  .hero-text{grid-area:text;align-self:end}
+  .cards{grid-area:cards;gap:14px}
+  .card{padding:20px;min-height:176px}
+  .join-btn{grid-area:join;align-self:start;justify-self:start}
+}
+@media (max-width:420px){.card{min-height:170px;padding:16px}.brand{gap:8px}.brand span{font-size:15px}.brand svg{width:28px;height:28px}.tools{gap:6px}.icon-btn{width:40px;height:40px}}
+</style>
 </head>
 <body>
 
-    <button type="button" class="admin-login-btn" id="loginBtn" onclick="loginAsAdmin()">
-        <i class="fa-solid fa-lock"></i> Login as Admin
-    </button>
-
-    <div class="admin-status-badge" id="statusBadge" onclick="logoutAdmin()">
-        <i class="fa-solid fa-user-shield"></i> Admin Active (Click to Logout)
+<header class="top">
+    <a href="index.html" class="brand" aria-label="Creativity Center home">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 4 L30 28 H4 Z" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/></svg>
+        <span>Creativity Center</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+        <a href="index-1.html">Installation</a>
+        <a href="index-2.html">Maintenance</a>
+        <a href="index-3.html">Administration</a>
+        <a href="index-7.html">Products</a>
+        <a href="index-4.html">About Us</a>
+    </nav>
+    <div class="tools">
+        <button type="button" class="icon-btn" id="staffToggle" aria-label="Staff login" aria-expanded="false" aria-controls="staffMenu"><i class="fa-solid fa-lock"></i></button>
+        <a class="icon-btn" href="https://www.facebook.com/share/1FAhHjcskP/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a class="icon-btn" href="https://wa.me/201552250338" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
     </div>
 
-    <button type="button" class="owner-login-btn" id="ownerLoginBtn" onclick="loginAsOwner()">
-        Owner
-    </button>
+    <div class="staff-menu" id="staffMenu">
+        <div class="sm-title">Staff login</div>
+        <div class="sm-sub">Choose how you want to sign in</div>
 
-    <div class="owner-status-badge" id="ownerStatusBadge" onclick="logoutOwner()">
-        Owner · Logout
+        <button type="button" class="sm-row" id="loginBtn" onclick="loginAsAdmin()"><i class="fa-solid fa-lock" style="color:#60a5fa"></i><span>Login as Admin</span></button>
+        <div class="sm-row" id="statusBadge" onclick="logoutAdmin()"><i class="fa-solid fa-user-shield" style="color:#34d399"></i><span>Admin Active (Click to Logout)</span></div>
+
+        <button type="button" class="sm-row" id="ownerLoginBtn" onclick="loginAsOwner()"><i class="fa-solid fa-crown" style="color:#fbbf24"></i><span>Login as Owner</span></button>
+        <div class="sm-row" id="ownerStatusBadge" onclick="logoutOwner()"><i class="fa-solid fa-crown" style="color:#fbbf24"></i><span>Owner · Logout</span></div>
+        <button type="button" class="sm-row" id="ownerDashboardBtn" onclick="window.location.href='index-6.html'"><i class="fa-solid fa-gauge" style="color:#60a5fa"></i><span>Dashboard</span></button>
+    </div>
+</header>
+
+<main class="hero">
+    <div class="hero-text">
+        <div class="hello">Welcome</div>
+        <h1>Creativity Center</h1>
+        <p class="lead">Learn, build and grow with everything your center needs in one place.</p>
     </div>
 
-    <button type="button" class="owner-dashboard-btn" id="ownerDashboardBtn" onclick="window.location.href='index-6.html'">
-        Dashboard
-    </button>
-
-    <div class="welcome">Welcome</div>
-
-    <div class="social-links">
-        <a href="https://www.facebook.com/share/1FAhHjcskP/" target="_blank">
-            <i class="fa-brands fa-facebook-f"></i>
-        </a>
-        <a href="https://wa.me/201552250338" target="_blank">
-            <i class="fa-brands fa-whatsapp"></i>
-        </a>
-    </div>
-
-    <div class="header-content">
-        <div class="site-title">Creativity Center</div>
-    </div>
-
-    <div class="button-grid">
-        <button type="button" class="btn install" onclick="window.location.href='index-1.html'">
-            <i class="fa-solid fa-screwdrivers-hardware"></i> Installation
+    <div class="cards">
+        <button type="button" class="card" onclick="window.location.href='index-1.html'">
+            <span class="card-top"><span class="chip c-green"><i class="fa-solid fa-screwdriver-wrench"></i></span><i class="fa-solid fa-arrow-right"></i></span>
+            <span><h2>Installation</h2><p>Set up your environment with ease</p></span>
         </button>
-
-        <button type="button" class="btn maintenance" onclick="window.location.href='index-2.html'">
-            <i class="fa-solid fa-wrench"></i> Maintenance
+        <button type="button" class="card" onclick="window.location.href='index-2.html'">
+            <span class="card-top"><span class="chip c-amber"><i class="fa-solid fa-wrench"></i></span><i class="fa-solid fa-arrow-right"></i></span>
+            <span><h2>Maintenance</h2><p>Keep your system running smoothly</p></span>
         </button>
-
-        <button type="button" class="btn admin" onclick="window.location.href='index-3.html'">
-            <i class="fa-solid fa-user-gear"></i> Administration
+        <button type="button" class="card" onclick="window.location.href='index-3.html'">
+            <span class="card-top"><span class="chip c-blue"><i class="fa-solid fa-user-gear"></i></span><i class="fa-solid fa-arrow-right"></i></span>
+            <span><h2>Administration</h2><p>Manage users, settings and resources</p></span>
         </button>
-
-        <button type="button" class="btn about" onclick="window.location.href='index-4.html'">
-            <i class="fa-solid fa-circle-info"></i> About Us
+        <button type="button" class="card" onclick="window.location.href='index-4.html'">
+            <span class="card-top"><span class="chip c-teal"><i class="fa-solid fa-circle-info"></i></span><i class="fa-solid fa-arrow-right"></i></span>
+            <span><h2>About Us</h2><p>Learn more about our center</p></span>
+        </button>
+        <button type="button" class="card card-wide" onclick="window.location.href='index-7.html'">
+            <span class="chip c-violet"><i class="fa-solid fa-box-open"></i></span>
+            <span class="grow"><h2>Products</h2><p>Browse our products and equipment</p></span>
+            <i class="fa-solid fa-arrow-right" style="color:var(--t-muted)"></i>
         </button>
     </div>
 
-    <!-- زر الانضمام -->
     <button type="button" class="join-btn" onclick="window.location.href='index-5.html'">
-        <i ></i> JOIN TO CREATIVITY
+        JOIN TO CREATIVITY <i class="fa-solid fa-arrow-right"></i>
     </button>
+</main>
 
-    <script>
+<!-- UI only: opens/closes the staff menu and shows a dot when someone is logged in -->
+<script>
+(function(){
+    var t=document.getElementById('staffToggle'),m=document.getElementById('staffMenu');
+    function dot(){t.classList.toggle('on',sessionStorage.getItem('isAdmin')==='true'||sessionStorage.getItem('isOwner')==='true');}
+    function close(){m.classList.remove('open');t.setAttribute('aria-expanded','false');}
+    t.addEventListener('click',function(e){e.stopPropagation();var o=m.classList.toggle('open');t.setAttribute('aria-expanded',o);});
+    m.addEventListener('click',function(){setTimeout(close,0);});
+    document.addEventListener('click',function(e){if(!m.contains(e.target))close();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+    new MutationObserver(dot).observe(m,{subtree:true,attributes:true,attributeFilter:['style']});
+    dot();
+})();
+</script>
+
+<script>
     // قائمة الحسابات المصرح لها بالدخول كأدمن (4 أشخاص)
     const adminUsers = [
         { username: "admin1", pass: "253200" },
