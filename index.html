@@ -39,7 +39,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sm-row{width:100%;display:block;text-align:left;border:1px solid var(--t-line);background:var(--t-surface);border-radius:14px;padding:14px 16px;margin-top:8px;font-size:15px;font-weight:600}
 .sm-row i{display:inline-block;width:22px;margin-right:12px;text-align:center}
 .sm-row:hover{border-color:#60a5fa}
-#statusBadge,#ownerStatusBadge,#ownerDashboardBtn{display:none}
+#statusBadge,#ownerStatusBadge,#ownerDashboardBtn,#ownerPricesBtn,#ownerAdminsBtn{display:none}
 
 .hero{width:100%;max-width:1120px;margin:0 auto;padding:16px var(--pad) 40px;display:grid;gap:20px;grid-template-columns:1fr;align-items:center;align-content:center;flex:1}
 .hello{font-size:14px;font-weight:500;color:var(--t-muted)}
@@ -125,6 +125,8 @@ button{font:inherit;color:inherit;cursor:pointer}
         <button type="button" class="sm-row" id="ownerLoginBtn" onclick="loginAsOwner()"><i class="fa-solid fa-crown" style="color:#fbbf24"></i><span>Login as Owner</span></button>
         <div class="sm-row" id="ownerStatusBadge" onclick="logoutOwner()"><i class="fa-solid fa-crown" style="color:#fbbf24"></i><span>Owner · Logout</span></div>
         <button type="button" class="sm-row" id="ownerDashboardBtn" onclick="window.location.href='index-6.html'"><i class="fa-solid fa-gauge" style="color:#60a5fa"></i><span>Dashboard</span></button>
+        <button type="button" class="sm-row" id="ownerPricesBtn" onclick="window.location.href='index-8.html'"><i class="fa-solid fa-tags" style="color:#34d399"></i><span>Price List</span></button>
+        <button type="button" class="sm-row" id="ownerAdminsBtn" onclick="window.location.href='index-9.html'"><i class="fa-solid fa-users-gear" style="color:#a78bfa"></i><span>Admins</span></button>
     </div>
 </header>
 
@@ -250,6 +252,8 @@ button{font:inherit;color:inherit;cursor:pointer}
         const ownerLoginBtn = document.getElementById("ownerLoginBtn");
         const ownerStatusBadge = document.getElementById("ownerStatusBadge");
         const ownerDashboardBtn = document.getElementById("ownerDashboardBtn");
+        const ownerPricesBtn = document.getElementById("ownerPricesBtn");
+        const ownerAdminsBtn = document.getElementById("ownerAdminsBtn");
 
         if (isAdmin === "true") {
             if(loginBtn) loginBtn.style.display = "none";
@@ -263,10 +267,14 @@ button{font:inherit;color:inherit;cursor:pointer}
             if(ownerLoginBtn) ownerLoginBtn.style.display = "none";
             if(ownerStatusBadge) ownerStatusBadge.style.display = "flex";
             if(ownerDashboardBtn) ownerDashboardBtn.style.display = "flex";
+            if(ownerPricesBtn) ownerPricesBtn.style.display = "flex";
+            if(ownerAdminsBtn) ownerAdminsBtn.style.display = "flex";
         } else {
             if(ownerLoginBtn) ownerLoginBtn.style.display = "flex";
             if(ownerStatusBadge) ownerStatusBadge.style.display = "none";
             if(ownerDashboardBtn) ownerDashboardBtn.style.display = "none";
+            if(ownerPricesBtn) ownerPricesBtn.style.display = "none";
+            if(ownerAdminsBtn) ownerAdminsBtn.style.display = "none";
         }
     }
 
