@@ -11,7 +11,11 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3598/3598209.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="user.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap">
     <link rel="stylesheet" href="theme.css">
     <style>
 :root{--t-bg:#0b1730;--t-surface:#12244a;--t-line:rgba(255,255,255,.1);--t-text:#f3f6fc;--t-muted:#9db2d6;--t-accent:#2563eb;--t-accent-hover:#1d4ed8;--t-danger:#ef4444;--t-ok:#10b981}
@@ -33,15 +37,17 @@ button{font:inherit;color:inherit;cursor:pointer}
 .icon-btn:hover{border-color:#60a5fa}
 #staffToggle{background:transparent;border-color:rgba(185,205,234,.35)}
 #staffToggle.on::after{content:"";position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:50%;background:var(--t-ok);border:2px solid var(--t-bg)}
+.lock-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.lock-label{font-size:11px;font-weight:600;color:#cfdcf2;line-height:1;white-space:nowrap}
 
-.staff-menu{display:none;position:absolute;top:76px;right:var(--pad);z-index:50;width:min(320px,calc(100% - 2*var(--pad)));background:#0e1d3d;border:1px solid var(--t-line);border-radius:18px;padding:12px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.staff-menu{display:none;position:absolute;top:calc(100% - 6px);right:var(--pad);z-index:50;width:min(320px,calc(100% - 2*var(--pad)));background:#0e1d3d;border:1px solid var(--t-line);border-radius:18px;padding:12px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
 .staff-menu.open{display:block}
 .sm-title{font-size:15px;font-weight:700;padding:8px 8px 2px}
 .sm-sub{font-size:13px;color:var(--t-muted);padding:0 8px 10px}
 .sm-row{width:100%;display:block;text-align:left;border:1px solid var(--t-line);background:var(--t-surface);border-radius:14px;padding:14px 16px;margin-top:8px;font-size:15px;font-weight:600}
 .sm-row i{display:inline-block;width:22px;margin-right:12px;text-align:center}
 .sm-row:hover{border-color:#60a5fa}
-#statusBadge,#ownerStatusBadge,#ownerDashboardBtn,#ownerPricesBtn,#ownerAdminsBtn{display:none}
+#statusBadge,#ownerStatusBadge,#ownerDashboardBtn,#ownerPricesBtn,#ownerAdminsBtn,#userStatusBadge,#userOrdersBtn{display:none}
 
 .hero{width:100%;max-width:1120px;margin:0 auto;padding:16px var(--pad) 40px;display:grid;gap:20px;grid-template-columns:1fr;align-items:center;align-content:center;flex:1}
 .hello{font-size:14px;font-weight:500;color:var(--t-muted)}
@@ -94,7 +100,45 @@ button{font:inherit;color:inherit;cursor:pointer}
 .footer-news input{flex:1;min-width:0;padding:13px 14px;background:transparent;border:none;outline:none;color:#fff;font-size:14px}
 .footer-news button{background:transparent;border:none;color:#fff;padding:0 18px;cursor:pointer;font-size:16px}
 .footer-bottom{border-top:1px solid rgba(255,255,255,.12);padding:22px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px;color:#9ca3af}
-</style>
+
+/* ===== Footer: language switch + staff access ===== */
+.lang-switch{display:flex;align-items:center;gap:8px;color:#9ca3af}
+.lang-switch button{background:none;border:0;color:#9ca3af;font-size:13px;padding:2px 4px;cursor:pointer}
+.lang-switch button:hover{color:#fff}
+.lang-switch button.active{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.lang-switch .sep{opacity:.4}
+.staff-foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:0 0 22px}
+.sf-label{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#4b5563}
+.ft-link{background:none;border:0;color:#6b7280;font-size:12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:4px 0}
+.ft-link:hover{color:#fff}
+.ft-link i{font-size:11px}
+
+/* ===== Arabic / RTL ===== */
+html[lang=ar] body,html[lang=ar] button,html[lang=ar] input,html[lang=ar] select,html[lang=ar] textarea{font-family:'Tajawal','Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif}
+html[dir=rtl] .brand{direction:ltr}
+html[dir=rtl] .card{text-align:right}
+html[dir=rtl] .fa-arrow-right,html[dir=rtl] .fa-chevron-right{transform:scaleX(-1)}
+html[dir=rtl] .staff-menu{right:auto;left:var(--pad)}
+html[dir=rtl] .sm-row{text-align:right}
+html[dir=rtl] .sm-row i{margin-right:0;margin-left:12px}
+html[dir=rtl] #site-footer{text-align:right}
+html[dir=rtl] .lead{max-width:30em}
+
+        /* Confirm button: always visible, solid blue */
+        .swal2-confirm, .swal2-styled.swal2-confirm, .neon-swal-confirm {
+            background: linear-gradient(135deg,#2563eb,#3b82f6) !important;
+            background-color: #2563eb !important;
+            color: #fff !important;
+            border: 1px solid #60a5fa !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 16px rgba(37,99,235,.45) !important;
+            opacity: 1 !important;
+        }
+        .swal2-confirm:hover, .neon-swal-confirm:hover { background: #1d4ed8 !important; filter: brightness(1.1); }
+        .swal2-deny{display:none !important}
+        .swal2-confirm:focus { box-shadow: 0 0 0 3px rgba(96,165,250,.5) !important; }
+    </style>
 </head>
 <body>
 
@@ -112,23 +156,20 @@ button{font:inherit;color:inherit;cursor:pointer}
         <a href="index-4.html">About Us</a>
     </nav>
     <div class="tools">
-        <button type="button" class="icon-btn" id="staffToggle" aria-label="Staff login" aria-expanded="false" aria-controls="staffMenu"><i class="fa-solid fa-lock"></i></button>
-        <a class="icon-btn" href="https://www.facebook.com/share/1FAhHjcskP/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-        <a class="icon-btn" href="https://wa.me/201552250338" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        <div class="lock-wrap">
+            <button type="button" class="icon-btn" id="staffToggle" aria-label="Login" aria-expanded="false" aria-controls="staffMenu"><i class="fa-solid fa-lock"></i></button>
+            <span class="lock-label">Login</span>
+        </div>
     </div>
 
     <div class="staff-menu" id="staffMenu">
-        <div class="sm-title">Staff login</div>
-        <div class="sm-sub">Choose how you want to sign in</div>
+        <div class="sm-title">Account</div>
+        <div class="sm-sub">Sign in or create a new account</div>
 
-        <button type="button" class="sm-row" id="loginBtn" onclick="loginAsAdmin()"><i class="fa-solid fa-lock" style="color:#60a5fa"></i><span>Login as Admin</span></button>
-        <div class="sm-row" id="statusBadge" onclick="logoutAdmin()"><i class="fa-solid fa-user-shield" style="color:#34d399"></i><span>Admin Active (Click to Logout)</span></div>
-
-        <button type="button" class="sm-row" id="ownerLoginBtn" onclick="loginAsOwner()"><i class="fa-solid fa-crown" style="color:#fbbf24"></i><span>Login as Owner</span></button>
-        <div class="sm-row" id="ownerStatusBadge" onclick="logoutOwner()"><i class="fa-solid fa-crown" style="color:#fbbf24"></i><span>Owner · Logout</span></div>
-        <button type="button" class="sm-row" id="ownerDashboardBtn" onclick="window.location.href='index-6.html'"><i class="fa-solid fa-gauge" style="color:#60a5fa"></i><span>Dashboard</span></button>
-        <button type="button" class="sm-row" id="ownerPricesBtn" onclick="window.location.href='index-8.html'"><i class="fa-solid fa-tags" style="color:#34d399"></i><span>Price List</span></button>
-        <button type="button" class="sm-row" id="ownerAdminsBtn" onclick="window.location.href='index-9.html'"><i class="fa-solid fa-users-gear" style="color:#a78bfa"></i><span>Admins</span></button>
+        <button type="button" class="sm-row" id="userLoginBtn" onclick="loginAsUser()"><i class="fa-solid fa-user" style="color:#f472b6"></i><span>Login as User</span></button>
+        <button type="button" class="sm-row" id="userRegisterBtn" onclick="window.location.href='index-10.html'"><i class="fa-solid fa-user-plus" style="color:#34d399"></i><span>Create Account</span></button>
+        <div class="sm-row" id="userStatusBadge" onclick="logoutUser()"><i class="fa-solid fa-user-check" style="color:#34d399"></i><span id="userStatusText">User · Logout</span></div>
+        <button type="button" class="sm-row" id="userOrdersBtn" onclick="window.location.href='index-11.html'"><i class="fa-solid fa-clipboard-list" style="color:#60a5fa"></i><span>My Requests</span></button>
     </div>
 </header>
 
@@ -206,7 +247,23 @@ button{font:inherit;color:inherit;cursor:pointer}
 
     <div class="footer-bottom">
       <span>&copy; 2026 Creativity Center. All rights reserved.</span>
-      <span><i class="fa-solid fa-globe"></i>&nbsp; English</span>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <i class="fa-solid fa-globe"></i>
+        <button type="button" data-lang="en" aria-pressed="true">English</button>
+        <span class="sep">|</span>
+        <button type="button" data-lang="ar" aria-pressed="false">العربية</button>
+      </div>
+    </div>
+
+    <div class="staff-foot">
+      <span class="sf-label">Staff</span>
+      <button type="button" class="ft-link" id="loginBtn" onclick="loginAsAdmin()"><i class="fa-solid fa-user-shield"></i><span>Admin login</span></button>
+      <div class="ft-link" id="statusBadge" onclick="logoutAdmin()" role="button" tabindex="0"><i class="fa-solid fa-user-shield" style="color:#34d399"></i><span>Admin · Logout</span></div>
+      <button type="button" class="ft-link" id="ownerLoginBtn" onclick="loginAsOwner()"><i class="fa-solid fa-crown"></i><span>Owner login</span></button>
+      <div class="ft-link" id="ownerStatusBadge" onclick="logoutOwner()" role="button" tabindex="0"><i class="fa-solid fa-crown" style="color:#fbbf24"></i><span>Owner · Logout</span></div>
+      <button type="button" class="ft-link" id="ownerDashboardBtn" onclick="window.location.href='index-6.html'"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></button>
+      <button type="button" class="ft-link" id="ownerPricesBtn" onclick="window.location.href='index-8.html'"><i class="fa-solid fa-tags"></i><span>Price List</span></button>
+      <button type="button" class="ft-link" id="ownerAdminsBtn" onclick="window.location.href='index-9.html'"><i class="fa-solid fa-users-gear"></i><span>Admins</span></button>
     </div>
   </div>
 </footer>
@@ -219,7 +276,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 <script>
 (function(){
     var t=document.getElementById('staffToggle'),m=document.getElementById('staffMenu');
-    function dot(){t.classList.toggle('on',sessionStorage.getItem('isAdmin')==='true'||sessionStorage.getItem('isOwner')==='true');}
+    function dot(){t.classList.toggle('on',sessionStorage.getItem('isUser')==='true');}
     function close(){m.classList.remove('open');t.setAttribute('aria-expanded','false');}
     t.addEventListener('click',function(e){e.stopPropagation();var o=m.classList.toggle('open');t.setAttribute('aria-expanded',o);});
     m.addEventListener('click',function(){setTimeout(close,0);});
@@ -257,6 +314,16 @@ button{font:inherit;color:inherit;cursor:pointer}
         const ownerPricesBtn = document.getElementById("ownerPricesBtn");
         const ownerAdminsBtn = document.getElementById("ownerAdminsBtn");
 
+        const isUser = sessionStorage.getItem("isUser") === "true";
+        document.getElementById("userLoginBtn").style.display = isUser ? "none" : "block";
+        document.getElementById("userStatusBadge").style.display = isUser ? "block" : "none";
+        document.getElementById("userOrdersBtn").style.display = isUser ? "block" : "none";
+        document.getElementById("userRegisterBtn").style.display = isUser ? "none" : "block";
+        if (isUser) {
+            document.getElementById("userStatusText").textContent =
+                (sessionStorage.getItem("currentUserName") || "User") + " · Logout";
+        }
+
         if (isAdmin === "true") {
             if(loginBtn) loginBtn.style.display = "none";
             if(statusBadge) statusBadge.style.display = "block";
@@ -278,6 +345,86 @@ button{font:inherit;color:inherit;cursor:pointer}
             if(ownerPricesBtn) ownerPricesBtn.style.display = "none";
             if(ownerAdminsBtn) ownerAdminsBtn.style.display = "none";
         }
+    }
+
+    // ===== User login / register =====
+    function loginAsUser() {
+        const popup = { popup: 'neon-swal-popup', title: 'neon-swal-title', confirmButton: 'neon-swal-confirm', cancelButton: 'neon-swal-cancel', };
+        Swal.fire({
+            title: 'User Login',
+            html: `
+                <input type="tel" id="swal-user-phone" class="swal2-input custom-input" placeholder="Phone number">
+                <input type="password" id="swal-user-pass" class="swal2-input custom-input" placeholder="Password">
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Login',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: 'transparent',
+            customClass: popup,
+            preConfirm: async () => {
+                const phone = document.getElementById('swal-user-phone').value.trim();
+                const pass = document.getElementById('swal-user-pass').value;
+                if (!phone || !pass) { Swal.showValidationMessage('Please enter phone and password'); return false; }
+                try { return await ccUser.login(phone, pass); }
+                catch (e) { Swal.showValidationMessage(e.message); return false; }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({ title: 'Welcome!', text: result.value.name, icon: 'success', timer: 1300, showConfirmButton: false, customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title' } })
+                    .then(checkAdminStatus);
+            }
+        });
+    }
+
+    function registerUser() {
+        Swal.fire({
+            title: 'Create account',
+            html: `
+                <input type="text" id="swal-reg-name" class="swal2-input custom-input" placeholder="Full name">
+                <input type="tel" id="swal-reg-phone" class="swal2-input custom-input" placeholder="Phone number">
+                <input type="password" id="swal-reg-pass" class="swal2-input custom-input" placeholder="Password (6+ characters)">
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Sign up',
+            cancelButtonText: 'Back',
+            confirmButtonColor: 'transparent',
+            customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title', confirmButton: 'neon-swal-confirm', cancelButton: 'neon-swal-cancel' },
+            preConfirm: async () => {
+                const name = document.getElementById('swal-reg-name').value.trim();
+                const phone = document.getElementById('swal-reg-phone').value.trim();
+                const pass = document.getElementById('swal-reg-pass').value;
+                if (!name || !phone || !pass) { Swal.showValidationMessage('Please fill all fields'); return false; }
+                try { return await ccUser.register(name, phone, pass); }
+                catch (e) { Swal.showValidationMessage(e.message); return false; }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({ title: 'Account created!', text: 'Welcome, ' + result.value.name, icon: 'success', timer: 1400, showConfirmButton: false, customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title' } })
+                    .then(checkAdminStatus);
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                loginAsUser();
+            }
+        });
+    }
+
+    function logoutUser() {
+        Swal.fire({
+            title: 'Logout?',
+            text: 'Are you sure you want to log out?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Yes, Logout',
+            cancelButtonText: 'Cancel',
+            customClass: { popup: 'neon-swal-popup', title: 'neon-swal-title', cancelButton: 'neon-swal-cancel' }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                ccUser.logout();
+                checkAdminStatus();
+            }
+        });
     }
 
     function loginAsOwner() {
@@ -458,5 +605,7 @@ button{font:inherit;color:inherit;cursor:pointer}
         });
     }
     </script>
+<script src="lang.js"></script>
+<script src="owner-bell.js"></script>
 </body>
 </html>
