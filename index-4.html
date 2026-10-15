@@ -1,191 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
+<script>
+/* Language follows the choice made on the home page (localStorage cc_lang) */
+var CC_LANG = '';
+try { CC_LANG = localStorage.getItem('cc_lang') || ''; } catch (e) {}
+if (CC_LANG !== 'ar' && CC_LANG !== 'en') CC_LANG = /^ar/i.test(navigator.language || '') ? 'ar' : 'en';
+document.documentElement.lang = CC_LANG;
+document.documentElement.dir = CC_LANG === 'ar' ? 'rtl' : 'ltr';
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About Us</title>
-
-<!-- استدعاء خط عصري واستيقونات FontAwesome -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-:root {
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --accent-color: #7c3aed;
-    --accent-hover: #6d28d9;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --border-color: #e2e8f0;
-    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-}
-
-body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    line-height: 1.6;
-    padding: 0;
-    margin: 0;
-}
-
-/* Container للتجاوب */
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px 0;
-}
-
-/* الهيدر والعنوان */
-header {
-    text-align: center;
-    padding: 30px 20px 10px;
-}
-
-.page-title {
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 800;
-    color: var(--accent-color);
-    letter-spacing: -0.5px;
-    margin-bottom: 10px;
-}
-
-
-
-/* قسم التعريف (About) */
-.about {
-    max-width: 800px;
-    margin: 30px auto;
-    background: var(--card-bg);
-    padding: clamp(24px, 5vw, 40px);
-    border-radius: 20px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
-    text-align: center;
-}
-
-.about h2 {
-    color: var(--accent-color);
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
-    font-weight: 700;
-    margin-bottom: 16px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.about p {
-    font-size: clamp(1rem, 2vw, 1.125rem);
-    color: var(--text-secondary);
-    line-height: 1.8;
-}
-
-/* معرض الصور */
-.gallery-section {
-    padding: 20px 0 60px;
-}
-
-.gallery-section h3 {
-    text-align: center;
-    font-size: 1.5rem;
-    color: var(--text-primary);
-    margin-bottom: 24px;
-    font-weight: 700;
-}
-
-.gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-}
-
-.gallery-item {
-    overflow: hidden;
-    border-radius: 16px;
-    background: var(--card-bg);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
-    aspect-ratio: 4 / 3;
-}
-
-.gallery img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.gallery-item:hover img {
-    transform: scale(1.08);
-}
-
-/* الفوتر */
-footer {
-    background: var(--card-bg);
-    color: var(--text-secondary);
-    text-align: center;
-    padding: 24px 20px;
-    border-top: 1px solid var(--border-color);
-    font-size: 0.95rem;
-    font-weight: 500;
-}
-
-/* تحسين للشاشات الصغيرة جداً */
-@media (max-width: 480px) {
-    .hero-img {
-        aspect-ratio: 4 / 3;
-        border-radius: 14px;
-    }
-    .gallery {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
+<title>About Us - Creativity Center</title>
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3598/3598209.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="theme.css">
+<style>
+:root{--t-bg:#0b1730;--t-surface:#12244a;--t-line:rgba(255,255,255,.1);--t-text:#f3f6fc;--t-muted:#9db2d6;--t-accent:#2563eb;--t-accent2:#60a5fa;--pad:clamp(16px,4vw,48px)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:linear-gradient(rgba(11,23,48,.86),rgba(11,23,48,.95)),url('bg.jpg') center/cover no-repeat fixed,#0b1730!important;color:var(--t-text);min-height:100svh;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.top{width:100%;padding:18px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800}
+.icon-btn{height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--t-line);background:var(--t-surface);display:flex;align-items:center;gap:8px;color:#cfdcf2;font-size:14px;font-weight:600;transition:border-color .2s}
+.icon-btn:hover{border-color:var(--t-accent2)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 var(--pad) 70px}
+
+/* hero */
+.hero{text-align:center;padding:clamp(28px,6vw,64px) 0 clamp(20px,4vw,36px)}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--t-accent2);background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);padding:6px 14px;border-radius:999px}
+.hero h1{margin-top:16px;font-size:clamp(2.2rem,7vw,4rem);font-weight:800;letter-spacing:-1px;line-height:1.1;background:linear-gradient(135deg,#fff 30%,#60a5fa);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin:14px auto 0;max-width:640px;color:var(--t-muted);font-size:clamp(1rem,2.2vw,1.15rem)}
+
+/* video */
+.video{position:relative;margin:10px auto 0;max-width:960px;border-radius:22px;padding:8px;background:linear-gradient(135deg,rgba(96,165,250,.55),rgba(167,139,250,.35));box-shadow:0 30px 80px -20px rgba(37,99,235,.55)}
+.video .frame{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:16/9;background:#0b1730}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vcap{margin-top:14px;text-align:center;color:var(--t-muted);font-size:14px}
+.vcap i{color:var(--t-accent2);margin-inline-end:6px}
+
+/* sections */
+.sec-title{margin:clamp(40px,7vw,72px) 0 20px;text-align:center;font-size:clamp(1.4rem,3.4vw,2rem);font-weight:800}
+.who{background:var(--t-surface);border:1px solid var(--t-line);border-radius:22px;padding:clamp(22px,4vw,40px);text-align:center;max-width:820px;margin:clamp(40px,7vw,72px) auto 0}
+.who h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:800;display:inline-flex;align-items:center;gap:10px;margin-bottom:12px}
+.who h2 i{color:var(--t-accent2)}
+.who p{color:#cfdcf2;font-size:clamp(1rem,2vw,1.1rem);line-height:1.9}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--t-surface);border:1px solid var(--t-line);border-radius:18px;padding:22px;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:rgba(96,165,250,.55)}
+.card .ic{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(96,165,250,.14);color:var(--t-accent2);margin-bottom:14px}
+.card h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.card p{font-size:14px;color:var(--t-muted)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.g{overflow:hidden;border-radius:18px;border:1px solid var(--t-line);aspect-ratio:4/3;background:var(--t-surface);cursor:zoom-in;padding:0}
+.g img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.g:hover img{transform:scale(1.08)}
+.cta{margin-top:clamp(40px,7vw,72px);text-align:center;background:linear-gradient(135deg,rgba(37,99,235,.35),rgba(124,58,237,.25));border:1px solid rgba(96,165,250,.35);border-radius:24px;padding:clamp(26px,5vw,48px)}
+.cta h2{font-size:clamp(1.4rem,3.4vw,2rem);font-weight:800}
+.cta p{margin:8px 0 20px;color:#cfdcf2}
+.btn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 24px;border-radius:12px;background:var(--t-accent);font-weight:700;font-size:15px;margin:4px;transition:background .2s,transform .2s}
+.btn:hover{background:#1d4ed8;transform:translateY(-2px)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.3)}
+.btn.ghost:hover{background:rgba(255,255,255,.08)}
+footer{text-align:center;padding:24px 20px;border-top:1px solid var(--t-line);color:var(--t-muted);font-size:14px}
+
+/* lightbox */
+#lb{position:fixed;inset:0;z-index:1000;background:rgba(5,10,22,.92);display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+#lb.on{display:flex}
+#lb img{max-width:100%;max-height:100%;border-radius:14px}
+
+/* reveal on scroll */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+</style>
 </head>
-
 <body>
-
-<header>
-    <h1 class="page-title">About Us</h1>
+<header class="top">
+    <a href="index.html" class="brand">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 4 L30 28 H4 Z" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/></svg>
+        <span>Creativity Center</span>
+    </a>
+    <a class="icon-btn" href="index.html"><i class="fa-solid fa-house"></i><span data-i="home"></span></a>
 </header>
 
-
-<main class="container">
-    <section class="about">
-        <h2><i class="fa-solid fa-users"></i> Who We Are</h2>
-        <p>
-            Welcome to our website. We are passionate about providing
-            excellent services and creating innovative solutions that help
-            our customers achieve their goals. Our team is dedicated to
-            quality, creativity, and customer satisfaction.
-        </p>
+<main class="wrap">
+    <section class="hero">
+        <span class="kicker"><i class="fa-solid fa-star"></i><span data-i="kicker"></span></span>
+        <h1 data-i="title"></h1>
+        <p data-i="lead"></p>
     </section>
 
-    <section class="gallery-section">
-        
-        <div class="gallery">
-            <div class="gallery-item"><img src="A.webp" alt="Gallery Image 1"></div>
-            <div class="gallery-item"><img src="F.webp" alt="Gallery Image 2"></div>
-            <div class="gallery-item"><img src="c.webp" alt="Gallery Image 3"></div>
-            <div class="gallery-item"><img src="E.webp" alt="Gallery Image 4"></div>
-            <div class="gallery-item"><img src="b.webp" alt="Gallery Image 5"></div>
+    <section class="video rv">
+        <div class="frame">
+            <iframe src="index-12.html" title="Creativity Center video" loading="lazy" allow="autoplay; fullscreen" allowfullscreen></iframe>
         </div>
+    </section>
+    <p class="vcap rv"><i class="fa-solid fa-circle-play"></i><span data-i="vcap"></span></p>
+
+    <section class="who rv">
+        <h2><i class="fa-solid fa-users"></i><span data-i="whoTitle"></span></h2>
+        <p data-i="whoText"></p>
+    </section>
+
+    <h2 class="sec-title rv" data-i="offerTitle"></h2>
+    <section class="grid">
+        <div class="card rv"><div class="ic"><i class="fa-solid fa-screwdriver-wrench"></i></div><h3 data-i="c1t"></h3><p data-i="c1p"></p></div>
+        <div class="card rv"><div class="ic"><i class="fa-solid fa-wrench"></i></div><h3 data-i="c2t"></h3><p data-i="c2p"></p></div>
+        <div class="card rv"><div class="ic"><i class="fa-solid fa-network-wired"></i></div><h3 data-i="c3t"></h3><p data-i="c3p"></p></div>
+        <div class="card rv"><div class="ic"><i class="fa-solid fa-box-open"></i></div><h3 data-i="c4t"></h3><p data-i="c4p"></p></div>
+    </section>
+
+    <h2 class="sec-title rv" data-i="galTitle"></h2>
+    <section class="gallery">
+        <button type="button" class="g rv"><img src="A.webp" alt="Gallery Image 1" loading="lazy"></button>
+        <button type="button" class="g rv"><img src="F.webp" alt="Gallery Image 2" loading="lazy"></button>
+        <button type="button" class="g rv"><img src="c.webp" alt="Gallery Image 3" loading="lazy"></button>
+        <button type="button" class="g rv"><img src="E.webp" alt="Gallery Image 4" loading="lazy"></button>
+        <button type="button" class="g rv"><img src="b.webp" alt="Gallery Image 5" loading="lazy"></button>
+    </section>
+
+    <section class="cta rv">
+        <h2 data-i="ctaTitle"></h2>
+        <p data-i="ctaText"></p>
+        <a class="btn" href="account.html?tab=register"><i class="fa-solid fa-user-plus"></i><span data-i="ctaReg"></span></a>
+        <a class="btn ghost" href="index.html"><i class="fa-solid fa-arrow-right-to-bracket" style="transform:scaleX(var(--flip,1))"></i><span data-i="ctaHome"></span></a>
     </section>
 </main>
 
-<footer>
-    © 2026 All Rights Reserved
-</footer>
+<footer><span data-i="foot"></span></footer>
+<div id="lb" role="dialog" aria-modal="true"><img alt=""></div>
 
+<script>
+var I18N = {
+    home:    { ar: 'الرئيسية', en: 'Home' },
+    kicker:  { ar: 'تعرّف علينا', en: 'Get to know us' },
+    title:   { ar: 'من نحن', en: 'About Us' },
+    lead:    { ar: 'مركز متكامل للتركيب والصيانة وإدارة الشبكات والمنتجات — كل ما تحتاجه في مكان واحد.', en: 'A complete center for installation, maintenance, network administration and products — everything you need in one place.' },
+    vcap:    { ar: 'شاهد الفيديو لتتعرف على الخدمات وعلى مزايا حسابك اللي مش ظاهرة.', en: 'Watch the video to discover our services and the account features you might have missed.' },
+    whoTitle:{ ar: 'من نحن', en: 'Who We Are' },
+    whoText: { ar: 'أهلاً بك في موقعنا. نحن شغوفون بتقديم خدمات ممتازة وابتكار حلول تساعد عملاءنا على تحقيق أهدافهم. فريقنا ملتزم بالجودة والإبداع ورضا العملاء.', en: 'Welcome to our website. We are passionate about providing excellent services and creating innovative solutions that help our customers achieve their goals. Our team is dedicated to quality, creativity, and customer satisfaction.' },
+    offerTitle:{ ar: 'ماذا نقدّم', en: 'What We Offer' },
+    c1t:{ ar: 'التركيب', en: 'Installation' }, c1p:{ ar: 'جهّز بيئتك بكل سهولة.', en: 'Set up your environment with ease.' },
+    c2t:{ ar: 'الصيانة', en: 'Maintenance' }, c2p:{ ar: 'حافظ على نظامك يعمل بكفاءة.', en: 'Keep your system running smoothly.' },
+    c3t:{ ar: 'إدارة الشبكات', en: 'Network Administration' }, c3p:{ ar: 'إدارة المستخدمين والإعدادات والموارد.', en: 'Manage users, settings and resources.' },
+    c4t:{ ar: 'المنتجات', en: 'Products' }, c4p:{ ar: 'تصفّح منتجاتنا ومعداتنا.', en: 'Browse our products and equipment.' },
+    galTitle:{ ar: 'لمحات من عملنا', en: 'A Glimpse of Our Work' },
+    ctaTitle:{ ar: 'جاهز تبدأ؟', en: 'Ready to start?' },
+    ctaText: { ar: 'أنشئ حسابك وتابع طلباتك أولاً بأول.', en: 'Create your account and follow your requests step by step.' },
+    ctaReg:  { ar: 'إنشاء حساب', en: 'Create Account' },
+    ctaHome: { ar: 'الصفحة الرئيسية', en: 'Home Page' },
+    foot:    { ar: '© 2026 Creativity Center. جميع الحقوق محفوظة.', en: '© 2026 Creativity Center. All rights reserved.' }
+};
+document.title = CC_LANG === 'ar' ? 'من نحن - Creativity Center' : 'About Us - Creativity Center';
+document.querySelectorAll('[data-i]').forEach(function (el) { var e = I18N[el.dataset.i]; if (e) el.textContent = e[CC_LANG] || e.en; });
+if (CC_LANG === 'ar') document.documentElement.style.setProperty('--flip', '-1');
+window.addEventListener('storage', function (e) { if (e.key === 'cc_lang') location.reload(); });
+
+/* reveal on scroll */
+var els = document.querySelectorAll('.rv');
+if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }); }, { threshold: .12 });
+    els.forEach(function (el, i) { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+} else els.forEach(function (el) { el.classList.add('in'); });
+
+/* lightbox */
+var lb = document.getElementById('lb'), lbi = lb.querySelector('img');
+document.querySelectorAll('.g').forEach(function (g) { g.addEventListener('click', function () { lbi.src = g.querySelector('img').src; lb.classList.add('on'); }); });
+lb.addEventListener('click', function () { lb.classList.remove('on'); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('on'); });
+</script>
 </body>
 </html>
