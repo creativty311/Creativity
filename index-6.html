@@ -282,6 +282,9 @@ td { color: #e5e7eb; }
     .top-bar { position: static; justify-content: center; margin-bottom: 20px; }
     h1 { margin-top: 10px; }
 }
+.badge-done, .badge-ucancel { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.badge-done { background: rgba(37,99,235,.18); color: #93c5fd; }
+.badge-ucancel { background: rgba(239,68,68,.15); color: #fca5a5; }
 </style>
 <link rel="stylesheet" href="theme.css">
 </head>
@@ -424,6 +427,12 @@ function switchTab(panelId, btn) {
 }
 
 function buildResponseBadge(req) {
+    if (req.userCancelled) {
+        return `<span class="badge-ucancel"><i class="fa-solid fa-ban"></i> Cancelled by customer</span>`;
+    }
+    if (req.status === "completed") {
+        return `<span class="badge-done"><i class="fa-solid fa-flag-checkered"></i> Completed${req.completedBy ? ` by ${req.completedBy}` : ""}</span>`;
+    }
     if (req.adminResponse === "accepted") {
         return `<span class="badge-accepted"><i class="fa-solid fa-check"></i> Agreed${req.respondedBy ? ` by ${req.respondedBy}` : ""}</span>`;
     }
@@ -569,5 +578,6 @@ function ownerLogout() {
     });
 }
 </script>
+<script src="owner-bell.js"></script>
 </body>
 </html>
