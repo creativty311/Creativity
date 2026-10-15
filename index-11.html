@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>
+/* Users only: anyone else is sent back to the home page */
+if (sessionStorage.getItem('isUser') !== 'true') { location.replace('index.html'); }
+
+/* Language follows the choice made on the home page (localStorage cc_lang) */
+var CC_LANG = '';
+try { CC_LANG = localStorage.getItem('cc_lang') || ''; } catch (e) {}
+if (CC_LANG !== 'ar' && CC_LANG !== 'en') CC_LANG = /^ar/i.test(navigator.language || '') ? 'ar' : 'en';
+document.documentElement.lang = CC_LANG;
+document.documentElement.dir = CC_LANG === 'ar' ? 'rtl' : 'ltr';
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>My Requests - Creativity Center</title>
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3598/3598209.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<script src="user.js"></script>
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{--t-bg:#0b1730;--t-surface:#12244a;--t-line:rgba(255,255,255,.1);--t-text:#f3f6fc;--t-muted:#9db2d6;--t-accent:#2563eb;--t-ok:#10b981;--t-danger:#ef4444;--pad:clamp(16px,4vw,48px)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:linear-gradient(rgba(11,23,48,.86),rgba(11,23,48,.93)),url('bg.jpg') center/cover no-repeat fixed,#0b1730!important;color:var(--t-text);min-height:100svh}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.top{width:100%;padding:18px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800}
+.icon-btn{height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--t-line);background:var(--t-surface);display:flex;align-items:center;gap:8px;color:#cfdcf2;font-size:14px;font-weight:600}
+.icon-btn:hover{border-color:#60a5fa}
+.wrap{max-width:900px;margin:0 auto;padding:8px var(--pad) 60px}
+h1{font-size:clamp(1.6rem,4.5vw,2.4rem);font-weight:800}
+.sub{margin-top:6px;color:var(--t-muted);font-size:14px}
+.tabs{margin:22px 0 16px;display:flex;flex-wrap:wrap;gap:8px}
+.tab{height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-muted);font-size:14px;font-weight:600}
+.tab.active{background:var(--t-accent);border-color:transparent;color:#fff}
+.list{display:grid;gap:12px}
+.order{background:var(--t-surface);border:1px solid var(--t-line);border-radius:18px;padding:18px;display:grid;gap:12px}
+.o-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.o-title{font-weight:700;font-size:16px}
+.o-id{font-family:ui-monospace,Menlo,Consolas,monospace;background:rgba(96,165,250,.14);color:#93c5fd;padding:2px 8px;border-radius:6px;font-size:12px;margin-inline-start:8px}
+.badge{font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+.b-pending{background:rgba(148,163,184,.15);color:#cbd5e1}
+.b-assigned{background:rgba(251,191,36,.15);color:#fbbf24}
+.b-ok{background:rgba(16,185,129,.15);color:#34d399}
+.b-done{background:rgba(37,99,235,.2);color:#93c5fd}
+.b-no{background:rgba(239,68,68,.15);color:#f87171}
+.b-cancel{background:rgba(239,68,68,.12);color:#fca5a5}
+.o-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 16px;font-size:14px;color:#cfdcf2}
+.o-info span{color:var(--t-muted);font-size:12px;display:block}
+.o-info b{font-weight:600}
+.rate{border-top:1px solid var(--t-line);padding-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.rate-label{font-size:13px;color:var(--t-muted)}
+.stars{display:flex;gap:4px;direction:ltr}
+.star{background:transparent;border:0;font-size:24px;color:#3b4f7d;padding:2px;transition:transform .15s,color .15s}
+.star.on{color:#fbbf24}
+.star:hover{transform:scale(1.2)}
+.rate-note{font-size:12px;color:var(--t-ok)}
+.actions{border-top:1px solid var(--t-line);padding-top:12px;display:flex;justify-content:flex-end}
+.cancel-btn{height:38px;padding:0 16px;border-radius:10px;border:1px solid rgba(239,68,68,.5);background:rgba(239,68,68,.1);color:#fca5a5;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+.cancel-btn:hover{background:rgba(239,68,68,.22)}
+.cancel-btn:disabled{opacity:.5;cursor:wait}
+.empty{padding:40px;text-align:center;color:var(--t-muted);background:var(--t-surface);border:1px solid var(--t-line);border-radius:18px}
+.foot{margin-top:24px}
+.btn{height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--t-line);background:var(--t-surface);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{border-color:#60a5fa}
+</style>
+</head>
+<body>
+<header class="top">
+    <a href="index.html" class="brand">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 4 L30 28 H4 Z" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/></svg>
+        <span>Creativity Center</span>
+    </a>
+    <a class="icon-btn" href="index.html"><i class="fa-solid fa-house"></i><span data-i="home"></span></a>
+</header>
+
+<main class="wrap">
+    <h1><i class="fa-solid fa-clipboard-list" style="color:#60a5fa;margin-inline-end:10px"></i><span data-i="title"></span></h1>
+    <p class="sub" id="hello"></p>
+
+    <div class="tabs" role="group" data-i-aria="filterAria">
+        <button type="button" class="tab active" data-f="all"><span data-i="tabAll"></span> <span id="n-all"></span></button>
+        <button type="button" class="tab" data-f="current"><span data-i="tabCurrent"></span> <span id="n-current"></span></button>
+        <button type="button" class="tab" data-f="previous"><span data-i="tabPrevious"></span> <span id="n-previous"></span></button>
+    </div>
+
+    <div class="list" id="list"><div class="empty" data-i="loading"></div></div>
+
+    <div class="foot">
+        <a class="btn" href="index.html"><i class="fa-solid fa-plus"></i><span data-i="newReq"></span></a>
+    </div>
+</main>
+
+<script>
+/* ---------- translations (language comes from the home page choice) ---------- */
+const I18N = {
+    home:        { ar: 'الرئيسية', en: 'Home' },
+    pageTitle:   { ar: 'طلباتي - Creativity Center', en: 'My Requests - Creativity Center' },
+    title:       { ar: 'طلباتي', en: 'My Requests' },
+    filterAria:  { ar: 'تصفية الطلبات', en: 'Filter requests' },
+    tabAll:      { ar: 'الكل', en: 'All' },
+    tabCurrent:  { ar: 'الحالية', en: 'Current' },
+    tabPrevious: { ar: 'السابقة', en: 'Previous' },
+    loading:     { ar: 'جاري تحميل طلباتك...', en: 'Loading your requests...' },
+    newReq:      { ar: 'طلب جديد من الصفحة الرئيسية', en: 'New request from the home page' },
+    hello:       { ar: 'أهلاً {name} — هنا كل طلباتك وحالتها الحالية.', en: 'Hello {name} — here are all your requests and their current status.' },
+    empty:       { ar: 'لا توجد طلبات هنا حتى الآن.', en: 'No requests here yet.' },
+    loadFail:    { ar: 'تعذر تحميل الطلبات. حاول مرة أخرى.', en: 'Could not load requests. Please try again.' },
+
+    secInstall:  { ar: 'طلب تركيب', en: 'Installation request' },
+    secMaint:    { ar: 'طلب صيانة', en: 'Maintenance request' },
+    secAdmin:    { ar: 'طلب إدارة شبكات', en: 'Network administration request' },
+    secJoin:     { ar: 'طلب انضمام', en: 'Join request' },
+
+    stCancelReq: { ar: 'طلب إلغاء', en: 'Cancellation request' },
+    stCancelDone:{ ar: 'تم تنفيذ الإلغاء', en: 'Cancellation completed' },
+    stUserCancel:{ ar: 'قمت بإلغاء الطلب', en: 'Cancelled by you' },
+    stCompleted: { ar: 'تم تنفيذ الطلب', en: 'Completed' },
+    stAccepted:  { ar: 'تمت الموافقة - قيد التنفيذ', en: 'Approved - in progress' },
+    stRejected:  { ar: 'تم رفض الطلب', en: 'Request rejected' },
+    stAssigned:  { ar: 'تم التوزيع - بانتظار رد الأدمن', en: 'Assigned - awaiting admin reply' },
+    stPending:   { ar: 'قيد المراجعة من الإدارة', en: 'Under review' },
+
+    lblAdmin:    { ar: 'الأدمن المسؤول', en: 'Responsible admin' },
+    noAdmin:     { ar: 'لم يتم تحديد أدمن بعد', en: 'No admin assigned yet' },
+    lblDate:     { ar: 'تاريخ الطلب', en: 'Request date' },
+    lblDoneAt:   { ar: 'تاريخ التنفيذ', en: 'Completed on' },
+    lblLocation: { ar: 'الموقع', en: 'Location' },
+    lblDetails:  { ar: 'التفاصيل', en: 'Details' },
+
+    rateThis:    { ar: 'قيّم هذا الطلب:', en: 'Rate this request:' },
+    rateYours:   { ar: 'تقييمك:', en: 'Your rating:' },
+    rateSaved:   { ar: 'تم حفظ تقييمك', en: 'Your rating was saved' },
+    starsAria:   { ar: '{n} نجوم', en: '{n} stars' },
+    thanks:      { ar: 'شكراً لتقييمك', en: 'Thanks for your rating' },
+    rateFail:    { ar: 'تعذر حفظ التقييم', en: 'Could not save your rating' },
+
+    cancelBtn:   { ar: 'إلغاء الطلب', en: 'Cancel request' },
+    cTitle:      { ar: 'إلغاء الطلب؟', en: 'Cancel this request?' },
+    cText:       { ar: 'هل أنت متأكد من إلغاء هذا الطلب؟ لا يمكن التراجع عن الإلغاء.', en: 'Are you sure you want to cancel this request? This cannot be undone.' },
+    cYes:        { ar: 'نعم، ألغِ الطلب', en: 'Yes, cancel it' },
+    cNo:         { ar: 'تراجع', en: 'Keep it' },
+    cDone:       { ar: 'تم إلغاء طلبك', en: 'Your request was cancelled' },
+    cFail:       { ar: 'تعذر إلغاء الطلب', en: 'Could not cancel the request' },
+    cTooLate:    { ar: 'لا يمكن إلغاء هذا الطلب لأنه لم يعد قيد المتابعة.', en: 'This request can no longer be cancelled because it is no longer active.' }
+};
+function t(key, vars){
+    const e = I18N[key]; let s = e ? (e[CC_LANG] || e.en) : key;
+    if (vars) Object.keys(vars).forEach(k => { s = s.split('{' + k + '}').join(vars[k]); });
+    return s;
+}
+const LOCALE = CC_LANG === 'ar' ? 'ar-EG' : 'en-GB';
+
+document.title = t('pageTitle');
+document.querySelectorAll('[data-i]').forEach(el => { el.textContent = t(el.dataset.i); });
+document.querySelectorAll('[data-i-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.iAria)); });
+/* if the language is changed on the home page in another tab, follow it */
+window.addEventListener('storage', e => { if (e.key === 'cc_lang') location.reload(); });
+
+/* ---------- data ---------- */
+const SECTIONS = [
+    { ref: 'installations',  label: 'secInstall', icon: 'fa-screwdriver-wrench' },
+    { ref: 'maintenance',    label: 'secMaint',   icon: 'fa-wrench' },
+    { ref: 'administration', label: 'secAdmin',   icon: 'fa-user-gear' },
+    { ref: 'joinRequests',   label: 'secJoin',    icon: 'fa-user-plus' }
+];
+const me = ccUser.phone();
+const db = ccUser.db();
+const store = {};
+let filter = 'all';
+const toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1400 });
+
+document.getElementById('hello').textContent = t('hello', { name: ccUser.name() });
+
+function esc(x){ return String(x ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function mine(r){ return ccUser.normPhone(r.userPhone || r.phone) === me; }
+function fmt(ms){ return new Date(ms).toLocaleString(LOCALE); }
+
+function statusOf(r){
+    if (r.userCancelled) return { cls: 'b-cancel', icon: 'fa-ban', text: t('stUserCancel') };
+    if (r.type === 'cancel') {
+        return r.status === 'completed'
+            ? { cls: 'b-done', icon: 'fa-flag-checkered', text: t('stCancelDone') }
+            : { cls: 'b-cancel', icon: 'fa-ban', text: t('stCancelReq') };
+    }
+    if (r.status === 'completed') return { cls: 'b-done', icon: 'fa-flag-checkered', text: t('stCompleted') };
+    if (r.adminResponse === 'accepted') return { cls: 'b-ok', icon: 'fa-circle-check', text: t('stAccepted') };
+    if (r.adminResponse === 'rejected') return { cls: 'b-no', icon: 'fa-circle-xmark', text: t('stRejected') };
+    if (r.assignedAdmin) return { cls: 'b-assigned', icon: 'fa-user-check', text: t('stAssigned') };
+    return { cls: 'b-pending', icon: 'fa-hourglass-half', text: t('stPending') };
+}
+
+/* "Previous" = finished in any way: completed, rejected, cancelled (by the user or a cancel ticket) */
+function isPrevious(r){
+    return r.userCancelled === true || r.type === 'cancel' || r.adminResponse === 'rejected' || r.status === 'completed';
+}
+
+function collect(){
+    const all = [];
+    SECTIONS.forEach(s => {
+        const d = store[s.ref] || {};
+        Object.keys(d).forEach(k => {
+            const r = d[k];
+            if (r && mine(r)) all.push({ s, id: r.dbId || k, key: k, r });
+        });
+    });
+    all.sort((a, b) => (b.r.createdAt || Date.parse(b.r.timestamp) || 0) - (a.r.createdAt || Date.parse(a.r.timestamp) || 0));
+    return all;
+}
+
+function starsHtml(item){
+    const cur = item.r.rating && item.r.rating.stars || 0;
+    let h = '';
+    for (let i = 1; i <= 5; i++){
+        h += `<button type="button" class="star ${i <= cur ? 'on' : ''}" data-ref="${esc(item.s.ref)}" data-id="${esc(item.key)}" data-v="${i}" aria-label="${esc(t('starsAria', { n: i }))}"><i class="fa-solid fa-star"></i></button>`;
+    }
+    return h;
+}
+
+function render(){
+    const all = collect();
+    const cur = all.filter(x => !isPrevious(x.r)), prev = all.filter(x => isPrevious(x.r));
+    document.getElementById('n-all').textContent = '(' + all.length + ')';
+    document.getElementById('n-current').textContent = '(' + cur.length + ')';
+    document.getElementById('n-previous').textContent = '(' + prev.length + ')';
+
+    const items = filter === 'current' ? cur : filter === 'previous' ? prev : all;
+    const list = document.getElementById('list');
+    if (!items.length){ list.innerHTML = '<div class="empty">' + esc(t('empty')) + '</div>'; return; }
+
+    list.innerHTML = items.map(item => {
+        const r = item.r, st = statusOf(r);
+        const title = r.device || r.field || t(item.s.label);
+        const when = r.createdAt ? fmt(r.createdAt) : (r.timestamp ? fmt(r.timestamp) : '');
+        const doneAt = r.status === 'completed' && r.completedAt ? fmt(r.completedAt) : '';
+        const admin = r.assignedAdmin
+            ? `<b><i class="fa-solid fa-user-shield" style="color:#a78bfa"></i> ${esc(r.assignedAdmin)}</b>`
+            : `<b style="color:var(--t-muted)">${esc(t('noAdmin'))}</b>`;
+        const canRate = r.type !== 'cancel' && !r.userCancelled;
+        const rateBlock = canRate ? `
+            <div class="rate">
+                <span class="rate-label">${esc(r.rating ? t('rateYours') : t('rateThis'))}</span>
+                <div class="stars">${starsHtml(item)}</div>
+                ${r.rating ? `<span class="rate-note">${esc(t('rateSaved'))}</span>` : ''}
+            </div>` : '';
+        const canCancel = !isPrevious(r);
+        const cancelBlock = canCancel ? `
+            <div class="actions">
+                <button type="button" class="cancel-btn" data-ref="${esc(item.s.ref)}" data-id="${esc(item.key)}"><i class="fa-solid fa-ban"></i>${esc(t('cancelBtn'))}</button>
+            </div>` : '';
+        return `<article class="order">
+            <div class="o-head">
+                <div class="o-title"><i class="fa-solid ${item.s.icon}" style="color:#60a5fa;margin-inline-end:8px"></i>${esc(t(item.s.label))} - ${esc(title)}<span class="o-id">${esc(item.id)}</span></div>
+                <span class="badge ${st.cls}"><i class="fa-solid ${st.icon}"></i>${esc(st.text)}</span>
+            </div>
+            <div class="o-info">
+                <div><span>${esc(t('lblAdmin'))}</span>${admin}</div>
+                ${when ? `<div><span>${esc(t('lblDate'))}</span><b>${esc(when)}</b></div>` : ''}
+                ${doneAt ? `<div><span>${esc(t('lblDoneAt'))}</span><b>${esc(doneAt)}</b></div>` : ''}
+                ${r.location ? `<div><span>${esc(t('lblLocation'))}</span><b>${esc(r.location)}</b></div>` : ''}
+                ${r.details ? `<div><span>${esc(t('lblDetails'))}</span><b>${esc(r.details)}</b></div>` : ''}
+            </div>
+            ${rateBlock}
+            ${cancelBlock}
+        </article>`;
+    }).join('');
+}
+
+/* ---------- actions ---------- */
+document.getElementById('list').addEventListener('click', e => {
+    const star = e.target.closest('.star');
+    if (star) {
+        const stars = Number(star.dataset.v);
+        db.ref(star.dataset.ref + '/' + star.dataset.id + '/rating').set({ stars: stars, at: Date.now(), by: me })
+            .then(() => toast.fire({ icon: 'success', title: t('thanks') }))
+            .catch(() => toast.fire({ icon: 'error', title: t('rateFail') }));
+        return;
+    }
+    const cb = e.target.closest('.cancel-btn');
+    if (cb) cancelOrder(cb);
+});
+
+function cancelOrder(btn){
+    const path = btn.dataset.ref + '/' + btn.dataset.id;
+    Swal.fire({
+        title: t('cTitle'),
+        text: t('cText'),
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: t('cYes'),
+        cancelButtonText: t('cNo'),
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#2563eb',
+        reverseButtons: true,
+        focusCancel: true
+    }).then(res => {
+        if (!res.isConfirmed) return;
+        btn.disabled = true;
+        /* re-check the live record first: it may have been completed/rejected in the meantime */
+        db.ref(path).once('value').then(snap => {
+            const r = snap.val();
+            if (!r || !mine(r) || isPrevious(r)) {
+                btn.disabled = false;
+                toast.fire({ icon: 'info', title: t('cTooLate') });
+                return;
+            }
+            return db.ref(path).update({ userCancelled: true, cancelledAt: Date.now(), cancelledBy: me })
+                .then(() => toast.fire({ icon: 'success', title: t('cDone') }));
+        }).catch(() => {
+            btn.disabled = false;
+            toast.fire({ icon: 'error', title: t('cFail') });
+        });
+    });
+}
+
+document.querySelectorAll('.tab').forEach(tb => tb.addEventListener('click', () => {
+    filter = tb.dataset.f;
+    document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === tb));
+    render();
+}));
+
+SECTIONS.forEach(s => {
+    db.ref(s.ref).on('value', snap => { store[s.ref] = snap.val() || {}; render(); },
+        () => { document.getElementById('list').innerHTML = '<div class="empty">' + esc(t('loadFail')) + '</div>'; });
+});
+</script>
+</body>
+</html>

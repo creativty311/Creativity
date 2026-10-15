@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>حسابي - Creativity Center</title>
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3598/3598209.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="user.js"></script>
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{--t-bg:#0b1730;--t-surface:#12244a;--t-line:rgba(255,255,255,.1);--t-text:#f3f6fc;--t-muted:#9db2d6;--t-accent:#2563eb;--t-accent-hover:#1d4ed8;--t-ok:#10b981;--t-danger:#ef4444;--pad:clamp(16px,4vw,48px)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:linear-gradient(rgba(11,23,48,.86),rgba(11,23,48,.93)),url('bg.jpg') center/cover no-repeat fixed,#0b1730!important;color:var(--t-text);min-height:100svh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+
+.top{width:100%;padding:18px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800;direction:ltr}
+.home{height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--t-line);background:var(--t-surface);display:flex;align-items:center;gap:8px;color:#cfdcf2;font-size:14px;font-weight:600}
+.home:hover{border-color:#60a5fa}
+
+main{flex:1;width:100%;max-width:1040px;margin:0 auto;padding:12px var(--pad) 48px;display:grid;grid-template-columns:1fr;gap:24px;align-items:center}
+@media(min-width:900px){main{grid-template-columns:1fr 440px;gap:56px}}
+
+/* ----- side pitch ----- */
+.pitch h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:800;line-height:1.25;letter-spacing:-.5px}
+.pitch h1 em{font-style:normal;color:#60a5fa}
+.pitch .lead{margin-top:12px;color:var(--t-muted);font-size:clamp(.95rem,2.2vw,1.08rem);line-height:1.7;max-width:30em}
+.perks{margin-top:26px;display:grid;gap:12px;list-style:none}
+.perks li{display:flex;align-items:center;gap:14px;background:rgba(18,36,74,.7);border:1px solid var(--t-line);border-radius:16px;padding:14px 16px}
+.perks .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+.perks b{display:block;font-size:15px}
+.perks span{display:block;margin-top:2px;font-size:13px;color:var(--t-muted)}
+.ic-blue{background:rgba(96,165,250,.14);color:#60a5fa}
+.ic-violet{background:rgba(167,139,250,.14);color:#a78bfa}
+.ic-amber{background:rgba(251,191,36,.14);color:#fbbf24}
+
+/* ----- card ----- */
+.card{background:var(--t-surface);border:1px solid var(--t-line);border-radius:22px;padding:26px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#0b1730;border:1px solid var(--t-line);border-radius:14px;padding:5px}
+.seg button{height:42px;border:0;border-radius:10px;background:transparent;color:var(--t-muted);font-size:14px;font-weight:700;transition:background .2s,color .2s}
+.seg button.active{background:var(--t-accent);color:#fff}
+.card h2{margin-top:22px;font-size:20px;font-weight:800}
+.card .hint{margin-top:4px;font-size:13px;color:var(--t-muted);line-height:1.6}
+form{margin-top:18px;display:grid;gap:14px}
+.field label{display:block;font-size:13px;font-weight:600;color:#cfdcf2;margin-bottom:6px}
+.box{position:relative;display:flex;align-items:center}
+.box>i.lead-ic{position:absolute;inset-inline-start:14px;color:#6f86b3;font-size:15px;pointer-events:none}
+.box input{width:100%;height:48px;background:#0b1730;border:1px solid var(--t-line);border-radius:12px;padding:0 44px;color:var(--t-text);font-size:15px;outline:0;transition:border-color .2s}
+.box input::placeholder{color:#5f77a3}
+.box input:focus{border-color:#60a5fa}
+.box input.bad{border-color:var(--t-danger)}
+.box input.good{border-color:var(--t-ok)}
+.box input[type=tel],.box input[type=password].ltr{direction:ltr;text-align:right}
+.eye{position:absolute;inset-inline-end:6px;width:36px;height:36px;border:0;background:transparent;color:#6f86b3;border-radius:8px}
+.eye:hover{color:#fff}
+.msg{min-height:16px;margin-top:5px;font-size:12px;color:#f87171}
+.meter{margin-top:8px;display:flex;gap:5px}
+.meter i{flex:1;height:5px;border-radius:99px;background:#1c3160;transition:background .2s}
+.meter-label{margin-top:5px;font-size:12px;color:var(--t-muted)}
+.submit{height:50px;border:0;border-radius:14px;background:var(--t-accent);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .2s}
+.submit:hover{background:var(--t-accent-hover)}
+.submit:disabled{opacity:.65;cursor:wait}
+.alt{margin-top:16px;text-align:center;font-size:13px;color:var(--t-muted)}
+.alt button{background:none;border:0;color:#60a5fa;font-weight:700;padding:0 4px}
+.alt button:hover{text-decoration:underline}
+.fine{margin-top:14px;font-size:12px;color:#7d93bd;line-height:1.7;text-align:center}
+.fine i{color:var(--t-ok);margin-inline-end:4px}
+.err{display:none;margin-top:2px;padding:11px 14px;border-radius:12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#fca5a5;font-size:13px;line-height:1.5}
+.err.show{display:block}
+
+/* ----- already signed in ----- */
+.me{display:none;text-align:center}
+.me .av{width:68px;height:68px;margin:0 auto;border-radius:20px;background:rgba(16,185,129,.14);color:#34d399;display:flex;align-items:center;justify-content:center;font-size:28px}
+.me h2{margin-top:16px}
+.me p{margin-top:6px;color:var(--t-muted);font-size:14px}
+.me .acts{margin-top:20px;display:grid;gap:10px}
+.me .acts a,.me .acts button{height:48px;border-radius:12px;border:1px solid var(--t-line);background:#0b1730;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+.me .acts a.primary{background:var(--t-accent);border-color:transparent}
+.me .acts a:hover,.me .acts button:hover{border-color:#60a5fa}
+
+@media(max-width:420px){.card{padding:20px}.brand span{font-size:15px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+        /* Confirm button: always visible, solid blue */
+        .swal2-confirm, .swal2-styled.swal2-confirm, .neon-swal-confirm {
+            background: linear-gradient(135deg,#2563eb,#3b82f6) !important;
+            background-color: #2563eb !important;
+            color: #fff !important;
+            border: 1px solid #60a5fa !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 16px rgba(37,99,235,.45) !important;
+            opacity: 1 !important;
+        }
+        .swal2-confirm:hover, .neon-swal-confirm:hover { background: #1d4ed8 !important; filter: brightness(1.1); }
+        .swal2-confirm:focus { box-shadow: 0 0 0 3px rgba(96,165,250,.5) !important; }
+    
+html[dir=ltr] .box input[type=tel],html[dir=ltr] .box input[type=password].ltr{text-align:left}
+html[lang=ar] body{font-family:'Tajawal','Plus Jakarta Sans',system-ui,sans-serif}
+</style>
+</head>
+<body>
+
+<header class="top">
+    <a href="index.html" class="brand" aria-label="Creativity Center">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 4 L30 28 H4 Z" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/></svg>
+        <span>Creativity Center</span>
+    </a>
+    <a class="home" href="index.html"><i class="fa-solid fa-house"></i>الرئيسية</a>
+</header>
+
+<main>
+    <section class="pitch" aria-label="مميزات الحساب">
+        <h1>حسابك في <em>Creativity Center</em><br>كل طلباتك في مكان واحد</h1>
+        <p class="lead">أنشئ حسابك مجانًا في أقل من دقيقة، وتابع طلباتك أولًا بأول من غير ما تحتاج تسأل.</p>
+        <ul class="perks">
+            <li><span class="ic ic-blue"><i class="fa-solid fa-clipboard-list"></i></span><div><b>تابع حالة طلباتك</b><span>شوف طلباتك الحالية والسابقة وحالة كل واحد.</span></div></li>
+            <li><span class="ic ic-violet"><i class="fa-solid fa-user-shield"></i></span><div><b>اعرف مين المسؤول</b><span>يظهر لك اسم الأدمن اللي بيتابع طلبك فور تحديده.</span></div></li>
+            <li><span class="ic ic-amber"><i class="fa-solid fa-star"></i></span><div><b>قيّم الخدمة</b><span>قيّم كل طلب بالنجوم ورأيك يفرق معانا.</span></div></li>
+        </ul>
+    </section>
+
+    <section class="card" aria-live="polite">
+        <!-- signed-in state -->
+        <div class="me" id="meBox">
+            <div class="av"><i class="fa-solid fa-user-check"></i></div>
+            <h2 id="meName"></h2>
+            <p id="mePhone" dir="ltr"></p>
+            <div class="acts">
+                <a class="primary" href="my-orders.html"><i class="fa-solid fa-clipboard-list"></i>طلباتي</a>
+                <a href="index.html"><i class="fa-solid fa-house"></i>الصفحة الرئيسية</a>
+                <button type="button" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>تسجيل الخروج</button>
+            </div>
+        </div>
+
+        <!-- auth forms -->
+        <div id="authBox">
+            <div class="seg" role="tablist">
+                <button type="button" role="tab" id="tabRegister" class="active">إنشاء حساب</button>
+                <button type="button" role="tab" id="tabLogin">تسجيل الدخول</button>
+            </div>
+
+            <!-- register -->
+            <div id="paneRegister">
+                <h2>أهلاً بيك 👋</h2>
+                <p class="hint">املأ بياناتك وابدأ تتابع طلباتك فورًا.</p>
+                <form id="regForm" novalidate>
+                    <div class="field">
+                        <label for="rName">الاسم بالكامل</label>
+                        <div class="box"><i class="fa-solid fa-user lead-ic"></i><input id="rName" type="text" autocomplete="name" placeholder=" " maxlength="60"></div>
+                        <div class="msg" id="mName"></div>
+                    </div>
+                    <div class="field">
+                        <label for="rPhone">رقم الموبايل</label>
+                        <div class="box"><i class="fa-solid fa-phone lead-ic"></i><input id="rPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></div>
+                        <div class="msg" id="mPhone"></div>
+                    </div>
+                    <div class="field">
+                        <label for="rPass">كلمة السر</label>
+                        <div class="box"><i class="fa-solid fa-lock lead-ic"></i><input id="rPass" class="ltr" type="password" autocomplete="new-password" placeholder="6 أحرف على الأقل"><button type="button" class="eye" data-eye="rPass" aria-label="إظهار كلمة السر"><i class="fa-regular fa-eye"></i></button></div>
+                        <div class="meter" id="meter"><i></i><i></i><i></i><i></i></div>
+                        <div class="meter-label" id="meterLabel"></div>
+                        <div class="msg" id="mPass"></div>
+                    </div>
+                    <div class="field">
+                        <label for="rPass2">تأكيد كلمة السر</label>
+                        <div class="box"><i class="fa-solid fa-shield-halved lead-ic"></i><input id="rPass2" class="ltr" type="password" autocomplete="new-password" placeholder="أعد كتابة كلمة السر"><button type="button" class="eye" data-eye="rPass2" aria-label="إظهار كلمة السر"><i class="fa-regular fa-eye"></i></button></div>
+                        <div class="msg" id="mPass2"></div>
+                    </div>
+                    <div class="err" id="regErr"></div>
+                    <button class="submit" id="regBtn" type="submit"><i class="fa-solid fa-user-plus"></i>إنشاء الحساب</button>
+                </form>
+                <p class="alt">عندك حساب؟ <button type="button" data-go="login">سجّل دخولك</button></p>
+                <p class="fine"><i class="fa-solid fa-shield-halved"></i>بياناتك بنستخدمها لربط طلباتك بحسابك فقط، وكلمة السر بتتخزن مشفّرة.</p>
+            </div>
+
+            <!-- login -->
+            <div id="paneLogin" hidden>
+                <h2>أهلاً بعودتك</h2>
+                <p class="hint">سجّل دخولك لمتابعة طلباتك.</p>
+                <form id="logForm" novalidate>
+                    <div class="field">
+                        <label for="lPhone">رقم الموبايل</label>
+                        <div class="box"><i class="fa-solid fa-phone lead-ic"></i><input id="lPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></div>
+                    </div>
+                    <div class="field">
+                        <label for="lPass">كلمة السر</label>
+                        <div class="box"><i class="fa-solid fa-lock lead-ic"></i><input id="lPass" class="ltr" type="password" autocomplete="current-password" placeholder="كلمة السر"><button type="button" class="eye" data-eye="lPass" aria-label="إظهار كلمة السر"><i class="fa-regular fa-eye"></i></button></div>
+                    </div>
+                    <div class="err" id="logErr"></div>
+                    <button class="submit" id="logBtn" type="submit"><i class="fa-solid fa-right-to-bracket"></i>تسجيل الدخول</button>
+                </form>
+                <p class="alt">لسه معندكش حساب؟ <button type="button" data-go="register">أنشئ حساب جديد</button></p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+/* Language follows the choice made on the home page (localStorage cc_lang) */
+(function(){
+    var L='';try{L=localStorage.getItem('cc_lang')||''}catch(e){}
+    if(L!=='ar'&&L!=='en')L=/^ar/i.test(navigator.language||'')?'ar':'en';
+    var D={"الرئيسية": "Home", "مميزات الحساب": "Account benefits", "كل طلباتك في مكان واحد": "all your requests in one place", "حسابك في": "Your account at", "أنشئ حسابك مجانًا في أقل من دقيقة، وتابع طلباتك أولًا بأول من غير ما تحتاج تسأل.": "Create your free account in under a minute and follow your requests step by step, no need to ask.", "تابع حالة طلباتك": "Track your requests", "شوف طلباتك الحالية والسابقة وحالة كل واحد.": "See your current and previous requests and the status of each one.", "اعرف مين المسؤول": "Know who is in charge", "يظهر لك اسم الأدمن اللي بيتابع طلبك فور تحديده.": "You will see the name of the admin handling your request as soon as one is assigned.", "قيّم الخدمة": "Rate the service", "قيّم كل طلب بالنجوم ورأيك يفرق معانا.": "Rate each request with stars; your opinion matters to us.", "طلباتي": "My Requests", "الصفحة الرئيسية": "Home page", "تسجيل الخروج": "Logout", "إنشاء حساب": "Create Account", "تسجيل الدخول": "Login", "أهلاً بيك 👋": "Welcome 👋", "املأ بياناتك وابدأ تتابع طلباتك فورًا.": "Fill in your details and start tracking your requests right away.", "الاسم بالكامل": "Full name", "مثال: أحمد محمد": "e.g. John Smith", "رقم الموبايل": "Phone number", "كلمة السر": "Password", "6 أحرف على الأقل": "At least 6 characters", "إظهار كلمة السر": "Show password", "تأكيد كلمة السر": "Confirm password", "أعد كتابة كلمة السر": "Re-enter your password", "إنشاء الحساب": "Create account", "عندك حساب؟": "Already have an account?", "سجّل دخولك": "Log in", "بياناتك بنستخدمها لربط طلباتك بحسابك فقط، وكلمة السر بتتخزن مشفّرة.": "We only use your data to link your requests to your account, and your password is stored hashed.", "أهلاً بعودتك": "Welcome back", "سجّل دخولك لمتابعة طلباتك.": "Log in to follow your requests.", "لسه معندكش حساب؟": "Don't have an account yet?", "أنشئ حساب جديد": "Create a new account", "ضعيفة جدًا": "Very weak", "متوسطة": "Fair", "جيدة": "Good", "قوية": "Strong", "قوة كلمة السر: ": "Password strength: ", "اكتب اسمك بالكامل (3 أحرف على الأقل)": "Enter your full name (at least 3 characters)", "اكتب رقم موبايل مصري صحيح مثل 01012345678": "Enter a valid Egyptian phone number like 01012345678", "كلمة السر لازم تكون 6 أحرف على الأقل": "Password must be at least 6 characters", "كلمتا السر غير متطابقتين": "Passwords do not match", "الرقم ده عليه حساب بالفعل، جرّب تسجّل دخولك.": "This number already has an account, try logging in.", "رقم الموبايل أو كلمة السر غير صحيحة.": "Wrong phone number or password.", "اكتب رقم موبايل صحيح.": "Enter a valid phone number.", "كلمة السر لازم تكون 6 أحرف على الأقل.": "Password must be at least 6 characters.", "حصلت مشكلة في الاتصال. جرّب تاني بعد شوية.": "Connection problem. Please try again shortly.", "جاري التنفيذ...": "Working...", "تم إنشاء حسابك!": "Account created!", "أهلاً ": "Welcome ", "أهلاً بعودتك!": "Welcome back!", "اكتب رقم الموبايل وكلمة السر.": "Enter your phone number and password.", "حسابي - Creativity Center": "My Account - Creativity Center"};
+    window.CC_LANG=L;
+    window.T=function(a){return L==='en'&&D[a]!==undefined?D[a]:a;};
+    var de=document.documentElement;de.lang=L;de.dir=L==='ar'?'rtl':'ltr';
+    if(L!=='en')return;
+    document.title=T(document.title);
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null),n,l=[];
+    while((n=w.nextNode()))l.push(n);
+    l.forEach(function(t){
+        if(t.parentNode&&/^(SCRIPT|STYLE)$/.test(t.parentNode.nodeName))return;
+        var m=t.nodeValue.match(/^(\s*)([\s\S]*?)(\s*)$/);
+        if(m[2]&&D[m[2]]!==undefined)t.nodeValue=m[1]+D[m[2]]+m[3];
+        else if(D[t.nodeValue]!==undefined)t.nodeValue=D[t.nodeValue];
+    });
+    document.querySelectorAll('[placeholder],[aria-label]').forEach(function(el){
+        ['placeholder','aria-label'].forEach(function(a){var v=el.getAttribute(a);if(v&&D[v]!==undefined)el.setAttribute(a,D[v]);});
+    });
+})();
+</script>
+<script>
+(function(){
+    var $ = function(id){ return document.getElementById(id); };
+    var params = new URLSearchParams(location.search);
+    var next = params.get('next');
+    // only allow going back to local pages of this site
+    var target = (next && /^[\w\-]+\.html$/.test(next)) ? next : 'my-orders.html';
+
+    function showState(){
+        var on = ccUser.isLoggedIn();
+        $('meBox').style.display = on ? 'block' : 'none';
+        $('authBox').style.display = on ? 'none' : 'block';
+        if(on){ $('meName').textContent = ccUser.name(); $('mePhone').textContent = ccUser.phone(); }
+    }
+
+    function go(which){
+        var reg = which === 'register';
+        $('paneRegister').hidden = !reg; $('paneLogin').hidden = reg;
+        $('tabRegister').classList.toggle('active', reg); $('tabLogin').classList.toggle('active', !reg);
+        $('tabRegister').setAttribute('aria-selected', reg); $('tabLogin').setAttribute('aria-selected', !reg);
+        (reg ? $('rName') : $('lPhone')).focus({preventScroll:true});
+    }
+    $('tabRegister').onclick = function(){ go('register'); };
+    $('tabLogin').onclick = function(){ go('login'); };
+    document.querySelectorAll('[data-go]').forEach(function(b){ b.onclick = function(){ go(b.dataset.go); }; });
+
+    // show / hide password
+    document.querySelectorAll('[data-eye]').forEach(function(b){
+        b.onclick = function(){
+            var inp = $(b.dataset.eye), show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            b.innerHTML = '<i class="fa-regular ' + (show ? 'fa-eye-slash' : 'fa-eye') + '"></i>';
+        };
+    });
+
+    // password strength
+    var COLORS = ['#ef4444','#f59e0b','#84cc16','#10b981'], LABELS = [T('ضعيفة جدًا'),T('متوسطة'),T('جيدة'),T('قوية')];
+    function strength(p){
+        var s = 0;
+        if(p.length >= 6) s++;
+        if(p.length >= 9) s++;
+        if(/[A-Za-z]/.test(p) && /\d/.test(p)) s++;
+        if(/[^A-Za-z0-9]/.test(p) || (/[a-z]/.test(p) && /[A-Z]/.test(p))) s++;
+        return Math.min(s, 4);
+    }
+    $('rPass').addEventListener('input', function(){
+        var p = this.value, s = p ? strength(p) : 0, bars = $('meter').children;
+        for(var i = 0; i < 4; i++) bars[i].style.background = i < s ? COLORS[Math.max(s-1,0)] : '';
+        $('meterLabel').textContent = p ? T('قوة كلمة السر: ') + LABELS[Math.max(s-1,0)] : '';
+    });
+
+    // validation helpers
+    function setMsg(inp, msgId, text){
+        $(msgId).textContent = text || '';
+        inp.classList.toggle('bad', !!text);
+        inp.classList.toggle('good', !text && !!inp.value);
+        return !text;
+    }
+    function vName(){ var v = $('rName').value.trim(); return setMsg($('rName'),'mName', v.length < 3 ? T('اكتب اسمك بالكامل (3 أحرف على الأقل)') : ''); }
+    function vPhone(){ var p = ccUser.normPhone($('rPhone').value); return setMsg($('rPhone'),'mPhone', /^01[0125]\d{8}$/.test(p) ? '' : T('اكتب رقم موبايل مصري صحيح مثل 01012345678')); }
+    function vPass(){ return setMsg($('rPass'),'mPass', $('rPass').value.length < 6 ? T('كلمة السر لازم تكون 6 أحرف على الأقل') : ''); }
+    function vPass2(){ return setMsg($('rPass2'),'mPass2', $('rPass2').value !== $('rPass').value || !$('rPass2').value ? T('كلمتا السر غير متطابقتين') : ''); }
+    $('rName').addEventListener('blur', vName);
+    $('rPhone').addEventListener('blur', vPhone);
+    $('rPass').addEventListener('blur', vPass);
+    $('rPass2').addEventListener('input', vPass2);
+
+    function showErr(id, text){ var e = $(id); e.textContent = text || ''; e.classList.toggle('show', !!text); }
+    function arMsg(e){
+        var m = (e && e.message) || '';
+        if(/already has an account/i.test(m)) return T('الرقم ده عليه حساب بالفعل، جرّب تسجّل دخولك.');
+        if(/Wrong phone number or password/i.test(m)) return T('رقم الموبايل أو كلمة السر غير صحيحة.');
+        if(/valid phone/i.test(m)) return T('اكتب رقم موبايل صحيح.');
+        if(/at least 6/i.test(m)) return T('كلمة السر لازم تكون 6 أحرف على الأقل.');
+        return T('حصلت مشكلة في الاتصال. جرّب تاني بعد شوية.');
+    }
+    function busy(btn, on, html){ btn.disabled = on; if(html) btn.innerHTML = on ? '<i class="fa-solid fa-spinner fa-spin"></i>' + T('جاري التنفيذ...') : html; }
+
+    var REG_HTML = '<i class="fa-solid fa-user-plus"></i>' + T('إنشاء الحساب'), LOG_HTML = '<i class="fa-solid fa-right-to-bracket"></i>' + T('تسجيل الدخول');
+
+    function welcome(title, name){
+        return Swal.fire({ title: title, text: name, icon: 'success', timer: 1400, showConfirmButton: false });
+    }
+
+    $('regForm').addEventListener('submit', async function(e){
+        e.preventDefault(); showErr('regErr');
+        var ok = [vName(), vPhone(), vPass(), vPass2()].every(Boolean);
+        if(!ok) return;
+        busy($('regBtn'), true, REG_HTML);
+        try{
+            var u = await ccUser.register($('rName').value.trim(), $('rPhone').value, $('rPass').value);
+            await welcome(T('تم إنشاء حسابك!'), T('أهلاً ') + u.name);
+            location.href = target;
+        }catch(err){
+            showErr('regErr', arMsg(err));
+            busy($('regBtn'), false, REG_HTML);
+        }
+    });
+
+    $('logForm').addEventListener('submit', async function(e){
+        e.preventDefault(); showErr('logErr');
+        if(!$('lPhone').value.trim() || !$('lPass').value){ showErr('logErr', T('اكتب رقم الموبايل وكلمة السر.')); return; }
+        busy($('logBtn'), true, LOG_HTML);
+        try{
+            var u = await ccUser.login($('lPhone').value, $('lPass').value);
+            await welcome(T('أهلاً بعودتك!'), u.name);
+            location.href = target;
+        }catch(err){
+            showErr('logErr', arMsg(err));
+            busy($('logBtn'), false, LOG_HTML);
+        }
+    });
+
+    $('logoutBtn').addEventListener('click', function(){ ccUser.logout(); showState(); go('login'); });
+
+    showState();
+    go(params.get('tab') === 'login' ? 'login' : 'register');
+})();
+</script>
+</body>
+</html>

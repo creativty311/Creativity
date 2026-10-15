@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Creativity Center — فيديو تعريفي ودليل المستخدم</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#0b1730;--sf:#12244a;--ln:rgba(255,255,255,.12);--tx:#f3f6fc;--mu:#9db2d6;--ac:#2563eb;--ac2:#60a5fa;--ok:#34d399;--gd:#fbbf24;--rd:#f87171;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1730}}
+:root[data-theme="dark"]{--bg:#0b1730}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{height:100%;background:var(--bg);display:grid;place-items:center;overflow:hidden;font-family:'Plus Jakarta Sans',Tahoma,system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--tx)}
+#stage{position:relative;width:min(100vw,calc((100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))*16/9));aspect-ratio:16/9;container-type:inline-size;overflow:hidden;background:radial-gradient(120% 90% at 80% 0%,#173a7a 0%,var(--bg) 60%)}
+.sc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4cqw 6cqw 9cqw;gap:2cqw}
+h1{font-size:5.2cqw;font-weight:800;line-height:1.2}
+h2{font-size:4cqw;font-weight:800;line-height:1.25}
+p,.sub{font-size:2.2cqw;color:var(--mu);line-height:1.5}
+.tag{font-size:1.7cqw;font-weight:800;color:#06251a;background:var(--gd);padding:.5cqw 1.6cqw;border-radius:99cqw}
+.a{animation:in .7s var(--d,0s) both cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(3cqw)}to{opacity:1;transform:none}}
+.paused *{animation-play-state:paused!important}
+.row{display:flex;gap:2cqw;flex-wrap:wrap;justify-content:center}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:2cqw;padding:2.2cqw 2.4cqw;min-width:17cqw;font-size:2cqw;font-weight:700}
+.card b{display:block;font-size:4.4cqw;margin-bottom:.8cqw}
+.card small{display:block;font-size:1.5cqw;color:var(--mu);font-weight:500;margin-top:.6cqw}
+.phone{background:var(--sf);border:1px solid var(--ln);border-radius:2cqw;padding:2.4cqw;width:36cqw;display:grid;gap:1.4cqw;text-align:start}
+.fld{background:#0b1730;border:1px solid var(--ln);border-radius:1cqw;padding:1.1cqw 1.4cqw;font-size:2cqw;direction:ltr;text-align:start;color:var(--mu)}
+.typ{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;width:0;color:var(--tx);animation:ty 1.6s steps(11) var(--d) forwards}
+@keyframes ty{to{width:11ch}}
+.btn{background:var(--ac);border-radius:1cqw;padding:1.2cqw;text-align:center;font-weight:800;font-size:2cqw}
+.steps{display:flex;gap:1.2cqw;align-items:flex-start;justify-content:center}
+.st{width:17cqw;display:grid;justify-items:center;gap:1cqw;font-size:1.7cqw;font-weight:700}
+.dot{width:6cqw;height:6cqw;border-radius:50%;border:.4cqw solid var(--ln);background:var(--sf);display:grid;place-items:center;font-size:2.6cqw;animation:lit .5s var(--d) forwards}
+@keyframes lit{to{background:var(--ok);border-color:var(--ok);color:#06251a}}
+.bar{width:5cqw;height:.5cqw;background:var(--ln);margin-top:3cqw;border-radius:9cqw}
+.stars{display:flex;gap:1cqw;direction:ltr;font-size:5cqw;color:var(--gd)}
+.stars i{font-style:normal;animation:pop .45s var(--d) both}
+@keyframes pop{from{transform:scale(0)}60%{transform:scale(1.4)}to{transform:scale(1)}}
+.chip{display:inline-flex;gap:1cqw;align-items:center;background:rgba(167,139,250,.15);color:#c4b5fd;border-radius:99cqw;padding:1cqw 2.4cqw;font-size:2.4cqw;font-weight:800}
+.cap{position:absolute;inset-inline:6cqw;bottom:6.5cqw;text-align:center;font-size:1.9cqw;color:#dbeafe;background:rgba(11,23,48,.7);border-radius:1.2cqw;padding:.9cqw 1.6cqw;width:fit-content;margin-inline:auto}
+.logo{width:9cqw;height:9cqw}
+.pulse{animation:pl 1.6s infinite}@keyframes pl{50%{transform:scale(1.06);box-shadow:0 0 0 1.4cqw rgba(37,99,235,.25)}}
+#prog{position:absolute;inset-inline:3cqw;bottom:2.2cqw;display:flex;gap:.6cqw;direction:ltr}
+#prog i{flex:1;height:.55cqw;background:rgba(255,255,255,.18);border-radius:9cqw;overflow:hidden;cursor:pointer}
+#prog i b{display:block;height:100%;width:0;background:var(--ac2)}
+#ctl{position:absolute;top:2cqw;inset-inline:2cqw;display:flex;justify-content:space-between;opacity:0;transition:opacity .3s;direction:ltr}
+#stage:hover #ctl,#stage.paused #ctl{opacity:1}
+#ctl button{height:5cqw;min-width:5cqw;padding:0 1.6cqw;border-radius:1.2cqw;border:1px solid var(--ln);background:rgba(18,36,74,.85);color:var(--tx);font:700 1.8cqw inherit;font-family:inherit;cursor:pointer}
+#ctl div{display:flex;gap:1cqw}
+</style>
+</head>
+<body>
+<div id="stage" class="paused">
+  <div id="scene"></div>
+  <div id="ctl"><div><button id="bPlay" aria-label="play">⏸</button><button id="bRe" aria-label="restart">⟲</button></div><button id="bLang">English</button></div>
+  <div id="prog"></div>
+</div>
+<script>
+var lang=(function(){try{var l=localStorage.getItem('cc_lang');if(l==='ar'||l==='en')return l}catch(e){}return /^en/i.test(navigator.language||'')?'en':'ar'})(), DUR=6500, N=7, t=0, playing=false, last=-1, prev=0;
+var $=function(i){return document.getElementById(i)};
+function T(a,e){return lang==='ar'?a:e}
+var A=function(d,x,c){return '<div class="a '+(c||'')+'" style="--d:'+d+'s">'+x+'</div>'};
+
+var S=[
+ function(){return A(0,'<svg class="logo" viewBox="0 0 34 34"><path d="M17 4 L30 28 H4 Z" fill="none" stroke="#60a5fa" stroke-width="2.6" stroke-linejoin="round"/></svg>')+
+  A(.2,'<h1>Creativity Center</h1>')+A(.4,'<h2 style="color:var(--ac2)">'+T('كل خدماتك التقنية في مكان واحد','All your tech services in one place')+'</h2>')+
+  A(.7,'<p>'+T('تركيب · صيانة · إدارة شبكات · منتجات','Installation · Maintenance · Networks · Products')+'</p>')},
+ function(){return A(0,'<h2>'+T('اطلب أي خدمة في دقيقة','Request any service in a minute')+'</h2>')+
+  '<div class="row">'+[['🛠️',T('تركيب','Installation'),T('جهّز بيئتك بسهولة','Set up with ease')],['🔧',T('صيانة','Maintenance'),T('نظامك يفضل شغّال','Keep it running')],['🌐',T('إدارة شبكات','Network admin'),T('مستخدمين وإعدادات','Users & settings')],['📦',T('المنتجات','Products'),T('تصفّح واسأل على واتساب','Browse & ask on WhatsApp')]].map(function(c,i){return A(.3+i*.25,'<b>'+c[0]+'</b>'+c[1]+'<small>'+c[2]+'</small>','card')}).join('')+'</div>'},
+ function(){return A(0,'<span class="tag">'+T('الخطوة الأولى','Step one')+'</span>')+A(.1,'<h2>'+T('حساب مجاني في 30 ثانية','A free account in 30 seconds')+'</h2>')+
+  A(.4,'<div class="phone"><div class="fld"><span class="typ" style="--d:.9s">01012345678</span></div><div class="fld">••••••••</div><div class="btn pulse">'+T('إنشاء الحساب','Create account')+'</div></div>')+
+  A(1,'<p>💡 '+T('اكتب رقمك بأي صيغة: 010… أو ‎+20…‎ وهنفهمه','Type your number any way: 010… or +20… — we understand both')+'</p>')},
+ function(){return A(0,'<span class="tag">'+T('ميزة مش ظاهرة ١','Hidden feature 1')+'</span>')+A(.1,'<h2>'+T('«طلباتي»: تابع كل طلب لحظة بلحظة','“My Requests”: follow every order live')+'</h2>')+
+  '<div class="steps">'+[['⏳',T('قيد المراجعة','Under review')],['👤',T('تم التوزيع','Assigned')],['✔',T('تمت الموافقة','Approved')],['🏁',T('تم التنفيذ','Completed')]].map(function(s,i){return A(.3+i*.2,'<div class="st"><div class="dot" style="--d:'+(1+i*.9)+'s">'+s[0]+'</div>'+s[1]+'</div>','')}).join('')+'</div>'+
+  A(1.2,'<p>'+T('الحالة بتتغير عندك تلقائيًا أول ما الأدمن يرد أو ينفّذ — من غير ما تسأل','The status updates by itself when the admin replies or finishes — no need to ask')+'</p>')},
+ function(){return A(0,'<span class="tag">'+T('ميزة مش ظاهرة ٢','Hidden feature 2')+'</span>')+A(.1,'<h2>'+T('اعرف مين المسؤول وقيّم الخدمة','Know who handles it, then rate it')+'</h2>')+
+  A(.4,'<span class="chip">🛡️ '+T('الأدمن المسؤول عن طلبك','Your responsible admin')+'</span>')+
+  '<div class="stars">'+[0,1,2,3,4].map(function(i){return '<i style="--d:'+(.9+i*.25)+'s">★</i>'}).join('')+'</div>'+
+  A(1.4,'<p>'+T('اسم الأدمن بيظهر على طلبك، وتقدر تقيّمه بالنجوم بعد التنفيذ','The admin’s name shows on your order, and you can rate it with stars')+'</p>')},
+ function(){return A(0,'<span class="tag">'+T('ميزة مش ظاهرة ٣','Hidden feature 3')+'</span>')+A(.1,'<h2>'+T('تحكّم كامل في طلبك','Full control of your request')+'</h2>')+
+  '<div class="row">'+[['❌',T('ألغِ طلبك بنفسك','Cancel it yourself'),T('من صفحة طلباتي بضغطة واحدة','One tap from My Requests')],['⚠️',T('تنبيه قبل ما تخسر بياناتك','A warning before you lose data'),T('لو خرجت من طلب لسه ما اتبعتش','If you leave an unsent request')],['✍️',T('بياناتك بتتملى لوحدها','Your details fill themselves'),T('الاسم والموبايل في كل طلب','Name & phone on every form')]].map(function(c,i){return A(.4+i*.3,'<b>'+c[0]+'</b>'+c[1]+'<small>'+c[2]+'</small>','card')}).join('')+'</div>'},
+ function(){return A(0,'<h1>'+T('ابدأ دلوقتي','Start now')+'</h1>')+
+  A(.3,'<div class="row"><div class="card">🌐 '+T('عربي / English','Arabic / English')+'<small>'+T('اللغة اللي تختارها بتفضل معاك','Your language choice follows you')+'</small></div><div class="card">💬 WhatsApp<small>'+T('دعم مباشر على واتساب','Live support on WhatsApp')+'</small></div></div>')+
+  A(.8,'<div class="btn pulse" style="padding:1.4cqw 5cqw;font-size:2.6cqw">'+T('سجّل حسابك الآن','Create your account now')+'</div>')+A(1,'<p>Creativity Center</p>')}
+];
+var CAP=[
+ ['مرحبًا بك في Creativity Center — مركزك التقني المتكامل.','Welcome to Creativity Center — your all-in-one tech hub.'],
+ ['من التركيب للصيانة لإدارة الشبكات والمنتجات، كل شيء من صفحة واحدة.','From installation to maintenance, networks and products — all from one page.'],
+ ['سجّل برقم موبايلك وكلمة سر، وكل طلباتك تترتبط بحسابك.','Sign up with your phone and a password, and all your requests link to your account.'],
+ ['افتح «طلباتي» وشوف طلباتك الحالية والسابقة وحالة كل واحد.','Open “My Requests” to see current and previous orders and their status.'],
+ ['شوف اسم الأدمن المسؤول، وبعد التنفيذ قيّم الخدمة بالنجوم.','See the responsible admin, and rate the service with stars after completion.'],
+ ['ألغِ طلبك بنفسك، ومتخافش تضيّع بياناتك بالغلط.','Cancel your order yourself, and never lose your data by mistake.'],
+ ['انضم إلينا، وأي سؤال؟ واتساب معاك على طول.','Join us — and for any question, WhatsApp is right there.']
+];
+
+function show(i){
+  var s=$('scene'); s.innerHTML='<section class="sc">'+S[i]()+'<div class="cap a" style="--d:.5s">'+T(CAP[i][0],CAP[i][1])+'</div></section>';
+}
+var prog=$('prog');
+for(var k=0;k<N;k++){var e=document.createElement('i');e.innerHTML='<b></b>';(function(k){e.onclick=function(){t=k*DUR;last=-1;if(!playing)set(true)}})(k);prog.appendChild(e)}
+function paint(){
+  var bs=prog.querySelectorAll('b');
+  for(var k=0;k<N;k++)bs[k].style.width=(t>=(k+1)*DUR?100:t<=k*DUR?0:(t-k*DUR)/DUR*100)+'%';
+}
+function set(p){playing=p;$('stage').classList.toggle('paused',!p);$('bPlay').textContent=p?'⏸':'▶'}
+function applyLang(){var d=document.documentElement;d.lang=lang;d.dir=lang==='ar'?'rtl':'ltr';$('bLang').textContent=lang==='ar'?'English':'العربية';last=-1}
+function tick(now){
+  var dt=now-prev;prev=now;
+  if(playing){t+=dt;if(t>=N*DUR){t=0;last=-1}}
+  var i=Math.min(N-1,Math.floor(t/DUR));
+  if(i!==last){last=i;show(i)}
+  paint();requestAnimationFrame(tick);
+}
+$('bPlay').onclick=function(){set(!playing)};
+$('bRe').onclick=function(){t=0;last=-1;set(true)};
+$('bLang').onclick=function(){lang=lang==='ar'?'en':'ar';applyLang()};
+document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();$('bPlay').click()}if(e.key==='ArrowRight'||e.key==='ArrowLeft'){var d=(e.key==='ArrowRight')===(lang==='en')?1:-1;t=Math.max(0,Math.min(N-1,Math.floor(t/DUR)+d))*DUR;last=-1}});
+applyLang();set(true);requestAnimationFrame(function(n){prev=n;requestAnimationFrame(tick)});
+</script>
+</body>
+</html>
