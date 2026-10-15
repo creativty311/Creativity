@@ -11,6 +11,7 @@
     <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="user.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -233,6 +234,7 @@
                 loadJoinRequests();
             } else {
                 document.getElementById("userSection").style.display = "block";
+                ccUser.prefill({ name: 'fullName', phone: 'phone' });
                 document.getElementById("adminSection").style.display = "none";
             }
         });
@@ -255,7 +257,8 @@
                 governorate: document.getElementById('governorate').value,
                 field: document.getElementById('field').value,
                 message: document.getElementById('message').value || "No Message",
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                ...ccUser.requestExtras()
             };
 
             database.ref('joinRequests/' + ticketId).set(newJoinRequest)
