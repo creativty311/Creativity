@@ -11,6 +11,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<script src="user.js"></script>
 
 <style>
 :root {
@@ -326,6 +327,28 @@ td { color: #e5e7eb; }
 
 .custom-swal-popup { background: #0f172a !important; border: 1px solid var(--border-color) !important; color: white !important; }
 .custom-swal-title { color: #ffffff !important; }
+
+        /* Confirm button: always visible, solid blue */
+        .swal2-confirm, .swal2-styled.swal2-confirm, .neon-swal-confirm {
+            background: linear-gradient(135deg,#2563eb,#3b82f6) !important;
+            background-color: #2563eb !important;
+            color: #fff !important;
+            border: 1px solid #60a5fa !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 16px rgba(37,99,235,.45) !important;
+            opacity: 1 !important;
+        }
+        .swal2-confirm:hover, .neon-swal-confirm:hover { background: #1d4ed8 !important; filter: brightness(1.1); }
+        .swal2-confirm:focus { box-shadow: 0 0 0 3px rgba(96,165,250,.5) !important; }
+    
+/* ---- Mark as done / cancelled by customer ---- */
+.done-btn { padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color: #cfdcf2; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
+.done-btn:hover:not(:disabled) { border-color: rgba(96,165,250,.6); color: #93c5fd; }
+.done-btn:disabled { opacity: .4; cursor: not-allowed; }
+.done-btn.active { background: linear-gradient(135deg, #2563eb, #1d4ed8); border-color: transparent; color: #fff; opacity: 1; }
+.cancelled-note { padding: 8px 12px; border-radius: 10px; background: rgba(239,68,68,.15); color: #fca5a5; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+.response-group.locked .accept-btn, .response-group.locked .reject-btn, .response-group.locked .done-btn { pointer-events: none; opacity: .35; }
 </style>
 <link rel="stylesheet" href="theme.css">
 </head>
@@ -431,6 +454,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function openForm(type){
+    openFormInner(type);
+    ccUser.prefill({ name: 'field_name', phone: 'field_phone' });
+}
+function openFormInner(type){
     currentType = type;
     const modal = document.getElementById("myForm");
     const title = document.getElementById("modalTitle");
@@ -552,11 +579,13 @@ function handleSubmitDirect() {
         location: document.getElementById("field_location").value,
         details: document.getElementById("field_details").value,
         paySender: currentType === 'new' ? document.getElementById("field_pay_sender").value : 'N/A',
-        payTx: currentType === 'new' ? document.getElementById("field_pay_tx").value : 'N/A'
+        payTx: currentType === 'new' ? document.getElementById("field_pay_tx").value : 'N/A',
+        ...ccUser.requestExtras()
     };
 
     database.ref('installations/' + ticketId).set(requestData)
     .then(() => {
+        ccUser.markSaved();
         closeForm(); 
         if(currentType === 'new') {
             Swal.fire({
@@ -611,13 +640,14 @@ function listenToLiveRequests() {
                     <td>${req.details}</td>
                     <td>${req.assignedAdmin ? `<span class="badge badge-assigned"><i class="fa-solid fa-user-check"></i> ${req.assignedAdmin}</span>` : `<span class="badge badge-unassigned">Unassigned</span>`}</td>
                     <td>
-                        <div class="response-group">
+                        <div class="response-group ${req.userCancelled ? 'locked' : ''}">
                             <button class="accept-btn ${req.adminResponse === 'accepted' ? 'active' : ''}" onclick="respondToTicket('${req.dbId}', 'accepted')">
                                 <i class="fa-solid fa-check"></i> Agree
                             </button>
                             <button class="reject-btn ${req.adminResponse === 'rejected' ? 'active' : ''}" onclick="respondToTicket('${req.dbId}', 'rejected')">
                                 <i class="fa-solid fa-xmark"></i> Reject
                             </button>
+                            ${req.userCancelled ? '<span class="cancelled-note"><i class="fa-solid fa-ban"></i> Cancelled by customer</span>' : `<button class="done-btn ${req.status === 'completed' ? 'active' : ''}" ${(req.adminResponse === 'accepted' && req.status !== 'completed') ? '' : 'disabled'} onclick="markCompleted('installations', '${req.dbId}')"><i class="fa-solid fa-flag-checkered"></i> ${req.status === 'completed' ? 'Done ✓' : 'Mark Done'}</button>`}
                         </div>
                     </td>
                     <td>
@@ -646,6 +676,29 @@ function respondToTicket(ticketId, decision) {
             timer: 1400,
             showConfirmButton: false,
             customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
+        });
+    });
+}
+
+function markCompleted(refName, ticketId) {
+    const currentAdmin = sessionStorage.getItem("currentAdmin");
+    const path = refName + '/' + ticketId;
+    const sw = { customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' } };
+    database.ref(path).once('value').then(snap => {
+        const t = snap.val() || {};
+        if (t.userCancelled) { Swal.fire(Object.assign({ title: 'Request cancelled', text: 'The customer cancelled this request.', icon: 'info' }, sw)); return; }
+        if (t.status === 'completed') return;
+        if (t.adminResponse !== 'accepted') { Swal.fire(Object.assign({ title: 'Agree first', text: 'Mark the request as Agreed before marking it as done.', icon: 'info' }, sw)); return; }
+        Swal.fire(Object.assign({
+            title: 'Mark as done?',
+            text: 'Confirm that ticket ' + ticketId + ' has been fully carried out. The customer will see it as completed in their account.',
+            icon: 'question', showCancelButton: true,
+            confirmButtonText: 'Yes, it is done', cancelButtonText: 'Cancel', confirmButtonColor: '#10b981'
+        }, sw)).then(r => {
+            if (!r.isConfirmed) return;
+            database.ref(path).update({ status: 'completed', completedAt: Date.now(), completedBy: currentAdmin })
+                .then(() => Swal.fire(Object.assign({ title: 'Marked as Done', text: 'The customer can now see this request as completed.', icon: 'success', timer: 1500, showConfirmButton: false }, sw)))
+                .catch(err => Swal.fire('Error', err.message, 'error'));
         });
     });
 }
